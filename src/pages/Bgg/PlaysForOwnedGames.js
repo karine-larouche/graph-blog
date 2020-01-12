@@ -3,6 +3,8 @@ import PropTypes from 'prop-types';
 import { Pie } from '@vx/shape';
 import { Group } from '@vx/group';
 import { red, orange, amber, lightGreen } from '@material-ui/core/colors';
+import { Typography } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core/styles';
 import { sortBy } from '../../utils/arrayUtils';
 
 const emptyPlayGroups = () => [
@@ -31,7 +33,31 @@ const groupByPlays = games => {
   return grouped;
 };
 
+const useStyles = makeStyles({
+  chart: {
+    display: 'flex',
+    flexDirection: 'row',
+    margin: 20,
+  },
+  legend: {
+    margin: '20px 0 0 20px',
+  },
+  legendItem: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  legendColor: {
+    height: 20,
+    width: 20,
+    borderRadius: 10,
+    marginRight: 8,
+  },
+});
+
 const PlaysForOwnedGames = ({ isFetching, hasError, games, username }) => {
+  const classes = useStyles();
+
   if (isFetching) return `Fetching games for ${username}...`;
   if (hasError) return 'An error occured... sorry!';
   if (!games) return 'Enter your bgg username to view your plays.';
@@ -48,24 +74,37 @@ const PlaysForOwnedGames = ({ isFetching, hasError, games, username }) => {
   const centerY = height / 2;
   return (
     <>
-      <svg width={width} height={height}>
-        <Group top={centerY} left={centerX}>
-          <Pie
-            data={playAmounts}
-            pieValue={d => d.games.length}
-            pieSortValues={() => -1}
-            outerRadius={radius}
-          >
-            {pie =>
-              pie.arcs.map((arc, i) => (
-                <g key={arc.data.label}>
-                  <path d={pie.path(arc)} fill={playAmounts[i].color} />
-                </g>
-              ))
-            }
-          </Pie>
-        </Group>
-      </svg>
+      <div className={classes.chart}>
+        <svg width={width} height={height}>
+          <Group top={centerY} left={centerX}>
+            <Pie
+              data={playAmounts}
+              pieValue={d => d.games.length}
+              pieSortValues={() => -1}
+              outerRadius={radius}
+            >
+              {pie =>
+                pie.arcs.map((arc, i) => (
+                  <g key={arc.data.label}>
+                    <path d={pie.path(arc)} fill={playAmounts[i].color} />
+                  </g>
+                ))
+              }
+            </Pie>
+          </Group>
+        </svg>
+        <div className={classes.legend}>
+          {playAmounts.map(playAmount => (
+            <div key={playAmount.label} className={classes.legendItem}>
+              <div
+                className={classes.legendColor}
+                style={{ backgroundColor: playAmount.color }}
+              />
+              <Typography>{playAmount.label}</Typography>
+            </div>
+          ))}
+        </div>
+      </div>
       <ul>
         {groupByPlays(games).map(group => (
           <li key={group.label}>
