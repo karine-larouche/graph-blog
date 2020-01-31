@@ -1,9 +1,24 @@
 import React, { useState } from 'react';
 import TextField from '@material-ui/core/TextField';
+import { makeStyles } from '@material-ui/core/styles';
 import { getOwnedGames } from './data';
 import PlaysForOwnedGames from './PlaysForOwnedGames';
 
+const useStyles = makeStyles({
+  root: {
+    padding: 20,
+    height: '100vh',
+    display: 'flex',
+    flexDirection: 'column',
+    boxSizing: 'border-box',
+  },
+  plays: {
+    overflowY: 'hidden',
+  },
+});
+
 const Bgg = () => {
+  const classes = useStyles();
   const [username, setUsername] = useState('kawouin');
   const [isFetching, setIsFetching] = useState(false);
   const [hasError, setHasError] = useState(false);
@@ -23,7 +38,7 @@ const Bgg = () => {
   };
 
   return (
-    <>
+    <div className={classes.root}>
       <form onSubmit={fetchOwnedGames}>
         <TextField
           label="bgg username"
@@ -37,8 +52,9 @@ const Bgg = () => {
         hasError={hasError}
         games={playedGames}
         username={username}
+        className={classes.plays}
       />
-    </>
+    </div>
   );
 };
 
