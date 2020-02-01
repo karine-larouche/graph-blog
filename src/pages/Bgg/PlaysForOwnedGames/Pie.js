@@ -30,7 +30,9 @@ const Pie = ({ playAmounts, selectedIndex, onSectionSelection, className }) => {
               <g
                 key={arc.data.label}
                 onClick={() => onSectionSelection(i)}
-                className={selectedIndex !== i && classes.unselectedSection}
+                className={
+                  selectedIndex === i ? undefined : classes.unselectedSection
+                }
               >
                 <path d={pie.path(arc)} fill={playAmounts[i].color} />
               </g>

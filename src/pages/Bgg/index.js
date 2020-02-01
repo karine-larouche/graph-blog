@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import TextField from '@material-ui/core/TextField';
 import { makeStyles } from '@material-ui/core/styles';
-import { getOwnedGames } from './data';
+import { getOwnedGames, getPlayedGames } from './data';
 import PlaysForOwnedGames from './PlaysForOwnedGames';
 
 const useStyles = makeStyles({
@@ -22,24 +22,32 @@ const Bgg = () => {
   const [username, setUsername] = useState('kawouin');
   const [isFetching, setIsFetching] = useState(false);
   const [hasError, setHasError] = useState(false);
+  const [ownedGames, setOwnedGames] = useState();
   const [playedGames, setPlayedGames] = useState();
 
-  const fetchOwnedGames = async event => {
+  const fetchData = async event => {
     event.preventDefault();
     setIsFetching(true);
     setHasError(false);
 
-    const games = await getOwnedGames(username);
+    const ownedGamesPromise = getOwnedGames(username);
+    const playedGamesPromise = getPlayedGames(username);
+    const fetchedOwnedGames = await ownedGamesPromise;
+    const fetchedPlayedGames = await playedGamesPromise;
 
-    if (games) setPlayedGames(games);
-    else setHasError(true);
+    if (fetchedOwnedGames && fetchedPlayedGames) {
+      setOwnedGames(fetchedOwnedGames);
+      setPlayedGames(fetchedPlayedGames);
+    } else {
+      setHasError(true);
+    }
 
     setIsFetching(false);
   };
 
   return (
     <div className={classes.root}>
-      <form onSubmit={fetchOwnedGames}>
+      <form onSubmit={fetchData}>
         <TextField
           label="bgg username"
           variant="outlined"
@@ -50,7 +58,7 @@ const Bgg = () => {
       <PlaysForOwnedGames
         isFetching={isFetching}
         hasError={hasError}
-        games={playedGames}
+        games={ownedGames}
         username={username}
         className={classes.plays}
       />
