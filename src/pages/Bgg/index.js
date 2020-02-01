@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import TextField from '@material-ui/core/TextField';
 import { makeStyles } from '@material-ui/core/styles';
-import { getOwnedGames, getPlayedGames } from './data';
+import { getOwnedGames, getPlays } from './data';
 import PlaysForOwnedGames from './PlaysForOwnedGames';
+import GamesPlayProgress from './GamesPlayProgress';
 
 const useStyles = makeStyles({
   root: {
@@ -23,7 +24,7 @@ const Bgg = () => {
   const [isFetching, setIsFetching] = useState(false);
   const [hasError, setHasError] = useState(false);
   const [ownedGames, setOwnedGames] = useState();
-  const [playedGames, setPlayedGames] = useState();
+  const [plays, setPlays] = useState();
 
   const fetchData = async event => {
     event.preventDefault();
@@ -31,13 +32,13 @@ const Bgg = () => {
     setHasError(false);
 
     const ownedGamesPromise = getOwnedGames(username);
-    const playedGamesPromise = getPlayedGames(username);
+    const playsPromise = getPlays(username);
     const fetchedOwnedGames = await ownedGamesPromise;
-    const fetchedPlayedGames = await playedGamesPromise;
+    const fetchedPlays = await playsPromise;
 
-    if (fetchedOwnedGames && fetchedPlayedGames) {
+    if (fetchedOwnedGames && fetchedPlays) {
       setOwnedGames(fetchedOwnedGames);
-      setPlayedGames(fetchedPlayedGames);
+      setPlays(fetchedPlays);
     } else {
       setHasError(true);
     }
@@ -55,6 +56,12 @@ const Bgg = () => {
           onChange={event => setUsername(event.target.value)}
         />
       </form>
+      <GamesPlayProgress
+        isFetching={isFetching}
+        hasError={hasError}
+        plays={plays}
+        username={username}
+      />
       <PlaysForOwnedGames
         isFetching={isFetching}
         hasError={hasError}

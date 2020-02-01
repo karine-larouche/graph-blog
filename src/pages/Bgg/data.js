@@ -28,7 +28,7 @@ const parsePlays = data => {
     .filter(isNotExpansion)
     .map(p => ({
       date: p.getAttribute('date'),
-      quantity: p.getAttribute('quantity'),
+      quantity: parseInt(p.getAttribute('quantity')),
       name: p.getElementsByTagName('item')[0].getAttribute('name'),
     }));
 };
@@ -47,7 +47,7 @@ const totalPlayPages = data => {
   );
 };
 
-export const getPlayedGames = async username => {
+export const getPlays = async username => {
   const result = await fetchWithRetry(playsUrl(username));
   if (!result || result.status !== 200) return undefined;
 

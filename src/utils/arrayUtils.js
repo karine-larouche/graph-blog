@@ -1,3 +1,5 @@
+export const last = array => array[array.length - 1];
+
 export const range = (f, l) =>
   Array.from({ length: l - f + 1 }, (v, i) => i + f);
 
