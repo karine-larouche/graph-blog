@@ -20,7 +20,7 @@ const useStyles = makeStyles(theme =>
     },
     listContainer: {
       flex: 1,
-      overflowY: 'scroll',
+      overflowY: 'auto',
     },
     list: {
       paddingRight: 12,

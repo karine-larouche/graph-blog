@@ -8,13 +8,12 @@ import GamesPlayProgress from './GamesPlayProgress';
 const useStyles = makeStyles({
   root: {
     padding: 20,
-    height: '100vh',
-    display: 'flex',
-    flexDirection: 'column',
-    boxSizing: 'border-box',
   },
   plays: {
-    overflowY: 'hidden',
+    margin: '20px 0',
+  },
+  owned: {
+    height: 220,
   },
 });
 
@@ -61,13 +60,14 @@ const Bgg = () => {
         hasError={hasError}
         plays={plays}
         username={username}
+        className={classes.plays}
       />
       <PlaysForOwnedGames
         isFetching={isFetching}
         hasError={hasError}
         games={ownedGames}
         username={username}
-        className={classes.plays}
+        className={classes.owned}
       />
     </div>
   );

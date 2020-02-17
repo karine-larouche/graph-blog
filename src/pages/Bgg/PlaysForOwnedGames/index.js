@@ -38,7 +38,6 @@ const useStyles = makeStyles({
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'flex-start',
-    marginTop: 20,
   },
   list: {
     flex: 1,
