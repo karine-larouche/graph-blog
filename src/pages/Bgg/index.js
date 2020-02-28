@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import TextField from '@material-ui/core/TextField';
 import { makeStyles } from '@material-ui/core/styles';
-import { getOwnedGames, getPlays } from './data';
+import getOwnedGames from './data/ownedGames';
+import getPlays from './data/plays';
 import PlaysForOwnedGames from './PlaysForOwnedGames';
 import GamesPlayProgress from './GamesPlayProgress';
 

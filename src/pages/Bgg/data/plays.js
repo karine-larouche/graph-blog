@@ -1,21 +1,8 @@
-import { range } from '../../utils/arrayUtils';
-import fetchWithRetry from '../../utils/fetchWithRetry';
-
-const ownedGamesUrl = username =>
-  `https://www.boardgamegeek.com/xmlapi2/collection?username=${username}&own=1&excludesubtype=boardgameexpansion`;
+import { range } from '../../../utils/arrayUtils';
+import fetchWithRetry from '../../../utils/fetchWithRetry';
 
 const playsUrl = (username, page = 1) =>
   `https://www.boardgamegeek.com/xmlapi2/plays?username=${username}&page=${page}`;
-
-const parseOwnedGames = data => {
-  const document = new DOMParser().parseFromString(data, 'text/xml');
-  return [...document.getElementsByTagName('item')].map(i => ({
-    name: i.getElementsByTagName('name')[0].childNodes[0].nodeValue,
-    numPlays: parseInt(
-      i.getElementsByTagName('numplays')[0].childNodes[0].nodeValue,
-    ),
-  }));
-};
 
 const isNotExpansion = play =>
   ![...play.getElementsByTagName('subtype')].find(
@@ -33,13 +20,6 @@ const parsePlays = data => {
     }));
 };
 
-export const getOwnedGames = async username => {
-  const result = await fetchWithRetry(ownedGamesUrl(username));
-  return result && result.status === 200
-    ? parseOwnedGames(result.data)
-    : undefined;
-};
-
 const totalPlayPages = data => {
   const document = new DOMParser().parseFromString(data, 'text/xml');
   return Math.ceil(
@@ -47,7 +27,7 @@ const totalPlayPages = data => {
   );
 };
 
-export const getPlays = async username => {
+export default async username => {
   const result = await fetchWithRetry(playsUrl(username));
   if (!result || result.status !== 200) return undefined;
 
