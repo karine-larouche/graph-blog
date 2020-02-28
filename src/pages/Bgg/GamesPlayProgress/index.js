@@ -13,10 +13,14 @@ const groupByGame = plays => {
   const playsByGame = plays.reduceRight((games, play) => {
     const game = games[play.name];
     if (game) {
-      game.totalPlays.push({
-        date: play.date,
-        total: last(game.totalPlays).total + play.quantity,
-      });
+      if (last(game.totalPlays).date === play.date) {
+        last(game.totalPlays).total += play.quantity;
+      } else {
+        game.totalPlays.push({
+          date: play.date,
+          total: last(game.totalPlays).total + play.quantity,
+        });
+      }
     } else {
       // eslint-disable-next-line no-param-reassign
       games[play.name] = {
