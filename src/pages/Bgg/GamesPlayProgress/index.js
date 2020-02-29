@@ -40,7 +40,13 @@ const groupByGame = plays => {
         // eslint-disable-next-line no-param-reassign
         games[play.name] = {
           name: play.name,
-          totalPlays: [{ date: play.date, total: play.quantity }],
+          totalPlays: [
+            {
+              date: format(subDays(new Date(play.date), 1), 'yyyy-MM-dd'),
+              total: 0,
+            },
+            { date: play.date, total: play.quantity },
+          ],
         };
       }
     }
@@ -81,8 +87,7 @@ const GamesPlayProgress = ({
 
   const earliestPlay = min(playsPerGame.map(game => game.totalPlays[0].date));
   const startDate = subDays(new Date(earliestPlay), 1);
-  const latestPlay = max(playsPerGame.map(game => last(game.totalPlays).date));
-  const xScale = scaleTime({ domain: [startDate, new Date(latestPlay)] });
+  const xScale = scaleTime({ domain: [startDate, new Date()] });
   xScale.range([0, width]);
 
   const maxPlays = max(playsPerGame.map(game => last(game.totalPlays).total));
@@ -91,8 +96,6 @@ const GamesPlayProgress = ({
 
   const x = d => xScale(new Date(d.date));
   const y = d => yScale(d.total);
-
-  const initial = { date: format(startDate, 'yyyy-MM-dd'), total: 0 };
 
   const isHighlighted = game =>
     highlightedGame && highlightedGame.name === game.name;
@@ -109,7 +112,7 @@ const GamesPlayProgress = ({
           <LinePath
             id={`line-path-${game.name}`}
             key={game.name}
-            data={[initial, ...game.totalPlays]}
+            data={game.totalPlays}
             x={x}
             y={y}
             stroke={ratingColor[game.rating]}
