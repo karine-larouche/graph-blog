@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { red, grey } from '@material-ui/core/colors';
+import { grey } from '@material-ui/core/colors';
 import { Group } from '@vx/group';
 import { GlyphDot } from '@vx/glyph';
 import { LinePath } from '@vx/shape';
@@ -8,6 +8,20 @@ import { scaleTime, scaleLinear } from '@vx/scale';
 import { curveMonotoneX } from '@vx/curve';
 import { format, subDays } from 'date-fns';
 import { last, min, max } from '../../../utils/arrayUtils';
+
+const ratingColor = {
+  1: '#f00',
+  2: '#f36',
+  3: '#f69',
+  4: '#f6c',
+  5: '#c9f',
+  6: '#99f',
+  7: '#9ff',
+  8: '#6f9',
+  9: '#3c9',
+  10: '#0c0',
+  undefined: grey[700],
+};
 
 const groupByGame = plays => {
   const playsByGame = plays.reduceRight((games, play) => {
@@ -33,10 +47,20 @@ const groupByGame = plays => {
   return Object.values(playsByGame);
 };
 
+const addRatings = (playsPerGame, ratings) => {
+  ratings.forEach(ratedGame => {
+    const playedGame = playsPerGame.find(g => g.name === ratedGame.name);
+    if (playedGame) {
+      playedGame.rating = ratedGame.rating;
+    }
+  });
+};
+
 const GamesPlayProgress = ({
   isFetching,
   hasError,
   plays,
+  ratings,
   username,
   className,
 }) => {
@@ -46,6 +70,7 @@ const GamesPlayProgress = ({
   if (plays.length === 0) return 'Log your plays on bgg to see this chart.';
 
   const playsPerGame = groupByGame(plays);
+  addRatings(playsPerGame, ratings);
 
   const [width, height] = [600, 400];
   const borderWidth = 4;
@@ -73,25 +98,25 @@ const GamesPlayProgress = ({
       className={className}
     >
       <Group>
-        {playsPerGame.map((game, i) => (
+        {playsPerGame.map(game => (
           <LinePath
             key={game.name}
             data={[initial, ...game.totalPlays]}
             x={x}
             y={y}
-            stroke={red[((i % 9) + 1) * 100]}
+            stroke={ratingColor[game.rating]}
             strokeWidth={2}
             curve={curveMonotoneX}
           />
         ))}
-        {playsPerGame.map((game, i) =>
+        {playsPerGame.map(game =>
           game.totalPlays.map(d => (
             <g key={`${game.name}-${d.total}`}>
               <GlyphDot
                 cx={x(d)}
                 cy={y(d)}
                 r={3}
-                fill={red[((i % 9) + 1) * 100]}
+                fill={ratingColor[game.rating]}
                 stroke="#fff"
                 strokeWidth={2}
               />
@@ -124,11 +149,18 @@ GamesPlayProgress.propTypes = {
       name: PropTypes.string.isRequired,
     }),
   ),
+  ratings: PropTypes.arrayOf(
+    PropTypes.shape({
+      name: PropTypes.string,
+      rating: PropTypes.number,
+    }),
+  ),
   username: PropTypes.string.isRequired,
 };
 
 GamesPlayProgress.defaultProps = {
   plays: undefined,
+  ratings: undefined,
 };
 
 export default GamesPlayProgress;

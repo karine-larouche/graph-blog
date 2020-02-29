@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import TextField from '@material-ui/core/TextField';
 import { makeStyles } from '@material-ui/core/styles';
 import getOwnedGames from './data/ownedGames';
+import getRatings from './data/ratings';
 import getPlays from './data/plays';
 import PlaysForOwnedGames from './PlaysForOwnedGames';
 import GamesPlayProgress from './GamesPlayProgress';
@@ -24,6 +25,7 @@ const Bgg = () => {
   const [isFetching, setIsFetching] = useState(false);
   const [hasError, setHasError] = useState(false);
   const [ownedGames, setOwnedGames] = useState();
+  const [ratings, setRatings] = useState();
   const [plays, setPlays] = useState();
 
   const fetchData = async event => {
@@ -33,12 +35,15 @@ const Bgg = () => {
 
     const ownedGamesPromise = getOwnedGames(username);
     const playsPromise = getPlays(username);
+    const ratingsPromise = getRatings(username);
     const fetchedOwnedGames = await ownedGamesPromise;
     const fetchedPlays = await playsPromise;
+    const fetchedRatings = await ratingsPromise;
 
-    if (fetchedOwnedGames && fetchedPlays) {
+    if (fetchedOwnedGames && fetchedPlays && fetchedRatings) {
       setOwnedGames(fetchedOwnedGames);
       setPlays(fetchedPlays);
+      setRatings(fetchedRatings);
     } else {
       setHasError(true);
     }
@@ -60,6 +65,7 @@ const Bgg = () => {
         isFetching={isFetching}
         hasError={hasError}
         plays={plays}
+        ratings={ratings}
         username={username}
         className={classes.plays}
       />
