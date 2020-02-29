@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { grey } from '@material-ui/core/colors';
 import { Group } from '@vx/group';
@@ -66,6 +66,8 @@ const GamesPlayProgress = ({
   username,
   className,
 }) => {
+  const [highlightedGame, setHighlightedGame] = useState();
+
   if (isFetching) return `Fetching games for ${username}...`;
   if (hasError) return 'An error occured... sorry!';
   if (!plays) return 'Enter your bgg username to view your plays.';
@@ -92,6 +94,9 @@ const GamesPlayProgress = ({
 
   const initial = { date: format(startDate, 'yyyy-MM-dd'), total: 0 };
 
+  const isHighlighted = game =>
+    highlightedGame && highlightedGame.name === game.name;
+
   return (
     <svg
       viewBox={`-${borderWidth} -${borderWidth} ${width +
@@ -102,36 +107,45 @@ const GamesPlayProgress = ({
       <Group>
         {playsPerGame.map(game => (
           <LinePath
+            id={`line-path-${game.name}`}
             key={game.name}
             data={[initial, ...game.totalPlays]}
             x={x}
             y={y}
             stroke={ratingColor[game.rating]}
-            strokeWidth={2}
+            fill="none"
+            opacity={isHighlighted(game) ? 1 : 0.6}
+            strokeWidth={isHighlighted(game) ? 4 : 3}
             curve={curveMonotoneX}
+            onMouseEnter={() => setHighlightedGame(game)}
+            onMouseLeave={() => setHighlightedGame()}
           />
         ))}
-        {playsPerGame.map(game =>
-          game.totalPlays.map(d => (
-            <g key={`${game.name}-${d.total}`}>
+        <use
+          xlinkHref={`#line-path-${highlightedGame && highlightedGame.name}`}
+          onMouseEnter={() => setHighlightedGame(highlightedGame)}
+          onMouseLeave={() => setHighlightedGame()}
+        />
+        {highlightedGame &&
+          highlightedGame.totalPlays.map(d => (
+            <g key={`${highlightedGame.name}-${d.total}`}>
               <GlyphDot
                 cx={x(d)}
                 cy={y(d)}
-                r={3}
-                fill={ratingColor[game.rating]}
-                stroke="#fff"
-                strokeWidth={2}
+                r={2}
+                fill="#000"
+                onMouseEnter={() => setHighlightedGame(highlightedGame)}
+                onMouseLeave={() => setHighlightedGame()}
               />
             </g>
-          )),
-        )}
+          ))}
       </Group>
       <rect
         x={-borderWidth / 2}
         y={-borderWidth / 2}
         width={width + borderWidth}
         height={height + borderWidth}
-        fill="transparent"
+        fill="none"
         stroke={grey[300]}
         strokeWidth={borderWidth}
         rx={12}
