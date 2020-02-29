@@ -6,7 +6,7 @@ import { GlyphDot } from '@vx/glyph';
 import { LinePath } from '@vx/shape';
 import { scaleTime, scaleLinear } from '@vx/scale';
 import { curveMonotoneX } from '@vx/curve';
-import { format, subDays } from 'date-fns';
+import { isValid, format, subDays } from 'date-fns';
 import { last, min, max } from '../../../utils/arrayUtils';
 
 const ratingColor = {
@@ -25,22 +25,24 @@ const ratingColor = {
 
 const groupByGame = plays => {
   const playsByGame = plays.reduceRight((games, play) => {
-    const game = games[play.name];
-    if (game) {
-      if (last(game.totalPlays).date === play.date) {
-        last(game.totalPlays).total += play.quantity;
+    if (isValid(new Date(play.date))) {
+      const game = games[play.name];
+      if (game) {
+        if (last(game.totalPlays).date === play.date) {
+          last(game.totalPlays).total += play.quantity;
+        } else {
+          game.totalPlays.push({
+            date: play.date,
+            total: last(game.totalPlays).total + play.quantity,
+          });
+        }
       } else {
-        game.totalPlays.push({
-          date: play.date,
-          total: last(game.totalPlays).total + play.quantity,
-        });
+        // eslint-disable-next-line no-param-reassign
+        games[play.name] = {
+          name: play.name,
+          totalPlays: [{ date: play.date, total: play.quantity }],
+        };
       }
-    } else {
-      // eslint-disable-next-line no-param-reassign
-      games[play.name] = {
-        name: play.name,
-        totalPlays: [{ date: play.date, total: play.quantity }],
-      };
     }
     return games;
   }, {});
