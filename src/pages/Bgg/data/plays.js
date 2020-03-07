@@ -9,10 +9,14 @@ const isNotExpansion = play =>
     s => s.getAttribute('value') === 'boardgameexpansion',
   );
 
+const isQuantityPositive = play =>
+  [parseInt(play.getAttribute('quantity'))] > 0;
+
 const parsePlays = data => {
   const document = new DOMParser().parseFromString(data, 'text/xml');
   return [...document.getElementsByTagName('play')]
     .filter(isNotExpansion)
+    .filter(isQuantityPositive)
     .map(p => ({
       date: p.getAttribute('date'),
       quantity: parseInt(p.getAttribute('quantity')),
