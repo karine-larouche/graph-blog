@@ -22,7 +22,7 @@ const useStyles = makeStyles({
 
 const Bgg = () => {
   const classes = useStyles();
-  const [username, setUsername] = useState('kawouin');
+  const [username, setUsername] = useState();
   const [isFetching, setIsFetching] = useState(false);
   const [hasError, setHasError] = useState(false);
   const [ownedGames, setOwnedGames] = useState();
