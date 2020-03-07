@@ -6,6 +6,7 @@ import getRatings from './data/ratings';
 import getPlays from './data/plays';
 import PlaysForOwnedGames from './PlaysForOwnedGames';
 import GamesPlayProgress from './GamesPlayProgress';
+import { analytics } from '../../firebase';
 
 const useStyles = makeStyles({
   root: {
@@ -32,6 +33,8 @@ const Bgg = () => {
     event.preventDefault();
     setIsFetching(true);
     setHasError(false);
+
+    analytics.logEvent('bgg_username_submit', { value: username });
 
     const ownedGamesPromise = getOwnedGames(username);
     const playsPromise = getPlays(username);
