@@ -100,6 +100,7 @@ const GamesPlayProgress = ({
   const isHighlighted = game =>
     highlightedGame && highlightedGame.name === game.name;
 
+  if (highlightedGame) console.log(highlightedGame.name);
   return (
     <svg
       viewBox={`-${borderWidth} -${borderWidth} ${width +
