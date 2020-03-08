@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { grey } from '@material-ui/core/colors';
+import { makeStyles } from '@material-ui/core/styles';
 import { isValid, format, subDays } from 'date-fns';
 import { last } from '../../../utils/arrayUtils';
 import ParentSize from '../../../components/ParentSize';
+import HighlightedGameInfo from './HighlightedGameInfo';
 import Graph from './Graph';
 
 const ratingColors = {
@@ -61,6 +63,17 @@ const addRatings = (playsPerGame, ratings) => {
   });
 };
 
+const useStyles = makeStyles(theme => ({
+  gamePlayProgress: {
+    display: 'flex',
+    flexDirection: 'column',
+  },
+  graph: {
+    flex: 1,
+    overflow: 'auto',
+  },
+}));
+
 const GamesPlayProgress = ({
   isFetching,
   hasError,
@@ -69,8 +82,8 @@ const GamesPlayProgress = ({
   username,
   className,
 }) => {
+  const classes = useStyles();
   const [highlightedGame, setHighlightedGame] = useState();
-  if (highlightedGame) console.log(highlightedGame.name);
 
   if (isFetching) return `Fetching games for ${username}...`;
   if (hasError) return 'An error occured... sorry!';
@@ -81,19 +94,25 @@ const GamesPlayProgress = ({
   addRatings(playsPerGame, ratings);
 
   return (
-    <div className={className}>
-      <ParentSize>
-        {({ width, height }) => (
-          <Graph
-            playsPerGame={playsPerGame}
-            ratingColors={ratingColors}
-            highlightedGame={highlightedGame}
-            setHighlightedGame={setHighlightedGame}
-            width={width}
-            height={height}
-          />
-        )}
-      </ParentSize>
+    <div className={`${classes.gamePlayProgress} ${className}`}>
+      <HighlightedGameInfo
+        highlightedGame={highlightedGame}
+        ratingColors={ratingColors}
+      />
+      <div className={classes.graph}>
+        <ParentSize>
+          {({ width, height }) => (
+            <Graph
+              playsPerGame={playsPerGame}
+              ratingColors={ratingColors}
+              highlightedGame={highlightedGame}
+              setHighlightedGame={setHighlightedGame}
+              width={width}
+              height={height}
+            />
+          )}
+        </ParentSize>
+      </div>
     </div>
   );
 };

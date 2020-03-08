@@ -3,10 +3,10 @@ import { Redirect, Route, Switch, useLocation } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import Bgg from '../Bgg';
-import Menu from './Menu';
+import Menu, { drawerWidth } from './Menu';
 import AppBar from './AppBar';
 
-const useStyles = makeStyles({
+const useStyles = makeStyles(theme => ({
   layout: {
     display: 'flex',
     overflow: 'hidden',
@@ -21,11 +21,15 @@ const useStyles = makeStyles({
   main: {
     flex: 1,
     overflow: 'auto',
+    [theme.breakpoints.up('lg')]: {
+      width: theme.breakpoints.values.lg - drawerWidth,
+      margin: '0 auto',
+    },
   },
   welcome: {
     margin: 20,
   },
-});
+}));
 
 const Layout = () => {
   const classes = useStyles();

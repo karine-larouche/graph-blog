@@ -54,13 +54,10 @@ const GamesPlayProgressGraph = ({
             strokeWidth={isHighlighted(game) ? 4 : 3}
             curve={curveMonotoneX}
             onMouseEnter={() => setHighlightedGame(game)}
-            onMouseLeave={() => setHighlightedGame()}
           />
         ))}
         <use
           xlinkHref={`#line-path-${highlightedGame && highlightedGame.name}`}
-          onMouseEnter={() => setHighlightedGame(highlightedGame)}
-          onMouseLeave={() => setHighlightedGame()}
         />
         {highlightedGame &&
           highlightedGame.totalPlays.map(d => (
@@ -71,7 +68,6 @@ const GamesPlayProgressGraph = ({
                 r={2}
                 fill="#000"
                 onMouseEnter={() => setHighlightedGame(highlightedGame)}
-                onMouseLeave={() => setHighlightedGame()}
               />
             </g>
           ))}

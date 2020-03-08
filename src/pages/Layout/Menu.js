@@ -10,7 +10,7 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 
-const drawerWidth = 240;
+export const drawerWidth = 240;
 
 const useStyles = makeStyles(theme => ({
   drawer: {

@@ -11,7 +11,10 @@ import { analytics } from '../../firebase';
 
 const useStyles = makeStyles(theme => ({
   root: {
-    padding: theme.spacing(1),
+    padding: theme.spacing(3),
+    [theme.breakpoints.down('sm')]: {
+      padding: theme.spacing(1),
+    },
     display: 'flex',
     flexDirection: 'column',
     height: '100%',
@@ -86,6 +89,7 @@ const Bgg = () => {
         </Route>
         <Route path="/bgg-play-progress">
           <GamesPlayProgress
+            key={plays}
             isFetching={isFetching}
             hasError={hasError}
             plays={plays}
