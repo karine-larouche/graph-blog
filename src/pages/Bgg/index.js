@@ -9,17 +9,25 @@ import PlaysForOwnedGames from './PlaysForOwnedGames';
 import GamesPlayProgress from './GamesPlayProgress';
 import { analytics } from '../../firebase';
 
-const useStyles = makeStyles({
+const useStyles = makeStyles(theme => ({
   root: {
-    padding: 20,
+    padding: theme.spacing(1),
+    display: 'flex',
+    flexDirection: 'column',
+    height: '100%',
+    boxSizing: 'border-box',
+  },
+  input: {
+    margin: theme.spacing(1, 0),
   },
   plays: {
-    margin: '20px 0',
+    flex: 1,
+    overflow: 'auto',
   },
   owned: {
     height: 220,
   },
-});
+}));
 
 const Bgg = () => {
   const classes = useStyles();
@@ -63,6 +71,7 @@ const Bgg = () => {
           variant="outlined"
           value={username}
           onChange={event => setUsername(event.target.value)}
+          className={classes.input}
         />
       </form>
       <Switch>

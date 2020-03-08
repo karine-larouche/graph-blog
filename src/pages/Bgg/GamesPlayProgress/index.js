@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { grey } from '@material-ui/core/colors';
 import { isValid, format, subDays } from 'date-fns';
 import { last } from '../../../utils/arrayUtils';
+import ParentSize from '../../../components/ParentSize';
 import Graph from './Graph';
 
 const ratingColors = {
@@ -80,13 +81,20 @@ const GamesPlayProgress = ({
   addRatings(playsPerGame, ratings);
 
   return (
-    <Graph
-      playsPerGame={playsPerGame}
-      ratingColors={ratingColors}
-      highlightedGame={highlightedGame}
-      setHighlightedGame={setHighlightedGame}
-      className={className}
-    />
+    <div className={className}>
+      <ParentSize>
+        {({ width, height }) => (
+          <Graph
+            playsPerGame={playsPerGame}
+            ratingColors={ratingColors}
+            highlightedGame={highlightedGame}
+            setHighlightedGame={setHighlightedGame}
+            width={width}
+            height={height}
+          />
+        )}
+      </ParentSize>
+    </div>
   );
 };
 

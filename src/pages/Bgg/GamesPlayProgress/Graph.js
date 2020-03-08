@@ -18,19 +18,19 @@ const GamesPlayProgressGraph = ({
   ratingColors,
   highlightedGame,
   setHighlightedGame,
-  className,
+  width,
+  height,
 }) => {
-  const [width, height] = [600, 400];
   const borderWidth = 4;
 
   const earliestPlay = min(playsPerGame.map(game => game.totalPlays[0].date));
   const startDate = subDays(new Date(earliestPlay), 1);
   const xScale = scaleTime({ domain: [startDate, new Date()] });
-  xScale.range([0, width]);
+  xScale.range([borderWidth, width - borderWidth]);
 
   const maxPlays = max(playsPerGame.map(game => last(game.totalPlays).total));
   const yScale = scaleLinear({ domain: [0, maxPlays] });
-  yScale.range([height, 0]);
+  yScale.range([height - borderWidth, borderWidth]);
 
   const x = d => xScale(new Date(d.date));
   const y = d => yScale(d.total);
@@ -39,12 +39,7 @@ const GamesPlayProgressGraph = ({
     highlightedGame && highlightedGame.name === game.name;
 
   return (
-    <svg
-      viewBox={`-${borderWidth} -${borderWidth} ${width +
-        2 * borderWidth} ${height + 2 * borderWidth}`}
-      width={width + 2 * borderWidth}
-      className={className}
-    >
+    <svg viewBox={`0 0 ${width} ${height}`} height={`${height}px`}>
       <Group>
         {playsPerGame.map(game => (
           <LinePath
@@ -82,10 +77,10 @@ const GamesPlayProgressGraph = ({
           ))}
       </Group>
       <rect
-        x={-borderWidth / 2}
-        y={-borderWidth / 2}
-        width={width + borderWidth}
-        height={height + borderWidth}
+        x={borderWidth / 2}
+        y={borderWidth / 2}
+        width={width - borderWidth}
+        height={height - borderWidth}
         fill="none"
         stroke={grey[300]}
         strokeWidth={borderWidth}
@@ -101,6 +96,8 @@ GamesPlayProgressGraph.propTypes = {
   ratingColors: ratingColorsShape.isRequired,
   highlightedGame: gameWithPlayProgressShape,
   setHighlightedGame: PropTypes.func.isRequired,
+  width: PropTypes.number.isRequired,
+  height: PropTypes.number.isRequired,
 };
 
 GamesPlayProgressGraph.defaultProps = {
