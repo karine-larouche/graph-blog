@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Switch, Route } from 'react-router-dom';
 import TextField from '@material-ui/core/TextField';
 import { makeStyles } from '@material-ui/core/styles';
 import getOwnedGames from './data/ownedGames';
@@ -22,7 +23,7 @@ const useStyles = makeStyles({
 
 const Bgg = () => {
   const classes = useStyles();
-  const [username, setUsername] = useState();
+  const [username, setUsername] = useState('');
   const [isFetching, setIsFetching] = useState(false);
   const [hasError, setHasError] = useState(false);
   const [ownedGames, setOwnedGames] = useState();
@@ -64,21 +65,27 @@ const Bgg = () => {
           onChange={event => setUsername(event.target.value)}
         />
       </form>
-      <GamesPlayProgress
-        isFetching={isFetching}
-        hasError={hasError}
-        plays={plays}
-        ratings={ratings}
-        username={username}
-        className={classes.plays}
-      />
-      <PlaysForOwnedGames
-        isFetching={isFetching}
-        hasError={hasError}
-        games={ownedGames}
-        username={username}
-        className={classes.owned}
-      />
+      <Switch>
+        <Route path="/bgg-owned-games">
+          <PlaysForOwnedGames
+            isFetching={isFetching}
+            hasError={hasError}
+            games={ownedGames}
+            username={username}
+            className={classes.owned}
+          />
+        </Route>
+        <Route path="/bgg-play-progress">
+          <GamesPlayProgress
+            isFetching={isFetching}
+            hasError={hasError}
+            plays={plays}
+            ratings={ratings}
+            username={username}
+            className={classes.plays}
+          />
+        </Route>
+      </Switch>
     </div>
   );
 };

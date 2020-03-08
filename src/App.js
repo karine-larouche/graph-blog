@@ -1,6 +1,11 @@
 import React from 'react';
-import Bgg from './pages/Bgg';
+import { BrowserRouter as Router } from 'react-router-dom';
+import Layout from './pages/Layout';
 
-const App = () => <Bgg />;
+const App = () => (
+  <Router>
+    <Layout />
+  </Router>
+);
 
 export default App;
