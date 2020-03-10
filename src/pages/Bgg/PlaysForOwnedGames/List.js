@@ -9,7 +9,6 @@ const useStyles = makeStyles(theme =>
     root: {
       display: 'flex',
       flexDirection: 'column',
-      marginLeft: 20,
       border: `solid 1px ${grey[900]}`,
       borderRadius: theme.shape.borderRadius,
       overflowY: 'hidden',

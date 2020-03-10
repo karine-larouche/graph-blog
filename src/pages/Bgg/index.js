@@ -19,6 +19,7 @@ const useStyles = makeStyles(theme => ({
     flexDirection: 'column',
     height: '100%',
     boxSizing: 'border-box',
+    overflow: 'auto',
   },
   input: {
     margin: theme.spacing(1, 0),
@@ -28,7 +29,7 @@ const useStyles = makeStyles(theme => ({
     overflow: 'auto',
   },
   owned: {
-    height: 220,
+    flex: 1,
   },
 }));
 

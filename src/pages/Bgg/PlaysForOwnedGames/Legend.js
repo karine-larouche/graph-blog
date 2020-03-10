@@ -4,9 +4,6 @@ import { Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 
 const useStyles = makeStyles({
-  legend: {
-    margin: '20px 0 0 20px',
-  },
   legendItem: {
     display: 'flex',
     flexDirection: 'row',
@@ -20,11 +17,11 @@ const useStyles = makeStyles({
   },
 });
 
-const Legend = ({ playAmounts }) => {
+const Legend = ({ playAmounts, className }) => {
   const classes = useStyles();
 
   return (
-    <div className={classes.legend}>
+    <div className={className}>
       {playAmounts.map(playAmount => (
         <div key={playAmount.label} className={classes.legendItem}>
           <div

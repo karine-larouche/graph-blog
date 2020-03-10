@@ -33,19 +33,43 @@ const groupByPlays = games => {
   return grouped;
 };
 
-const useStyles = makeStyles({
+const useStyles = makeStyles(theme => ({
   root: {
+    paddingTop: 10,
     display: 'flex',
-    flexDirection: 'row',
-    alignItems: 'flex-start',
+    flexDirection: 'column',
+    alignItems: 'center',
+    [theme.breakpoints.up('sm')]: {
+      display: 'flex',
+      flexDirection: 'row',
+      alignItems: 'flex-start',
+      flexWrap: 'wrap',
+      justifyContent: 'center',
+    },
+  },
+  pieAndLegend: {
+    display: 'flex',
+    flexWrap: 'wrap',
+    marginBottom: 10,
+    justifyContent: 'center',
+  },
+  pie: {
+    flexShrink: 0,
+  },
+  legend: {
+    margin: '10px 20px 0 20px',
   },
   list: {
-    flex: 1,
-    maxWidth: 256,
+    marginTop: 10,
+    minWidth: 200,
+    maxWidth: 320,
     boxSizing: 'border-box',
-    maxHeight: '100%',
+    [theme.breakpoints.up('sm')]: {
+      flex: 1,
+      maxHeight: 320,
+    },
   },
-});
+}));
 
 const PlaysForOwnedGames = ({
   isFetching,
@@ -71,12 +95,15 @@ const PlaysForOwnedGames = ({
 
   return (
     <div className={`${className} ${classes.root}`}>
-      <Pie
-        playAmounts={playAmounts}
-        selectedIndex={selectedIndex}
-        onSectionSelection={setSelectedIndex}
-      />
-      <Legend playAmounts={playAmounts} />
+      <div className={classes.pieAndLegend}>
+        <Pie
+          playAmounts={playAmounts}
+          selectedIndex={selectedIndex}
+          onSectionSelection={setSelectedIndex}
+          className={classes.pie}
+        />
+        <Legend playAmounts={playAmounts} className={classes.legend} />
+      </div>
       <List
         label={selected.label}
         color={selected.color}
