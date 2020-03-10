@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { red, orange, amber, lightGreen } from '@material-ui/core/colors';
 import { makeStyles } from '@material-ui/core/styles';
+import Typography from '@material-ui/core/Typography';
 import { sortBy } from '../../../utils/arrayUtils';
 import Pie from './Pie';
 import Legend from './Legend';
@@ -81,11 +82,17 @@ const PlaysForOwnedGames = ({
   const classes = useStyles();
   const [selectedIndex, setSelectedIndex] = useState(0);
 
-  if (isFetching) return `Fetching games for ${username}...`;
-  if (hasError) return 'An error occured... sorry!';
-  if (!games) return 'Enter your bgg username to view your plays.';
+  if (isFetching)
+    return <Typography>{`Fetching games for ${username}...`}</Typography>;
+  if (hasError) return <Typography>An error occured... sorry!</Typography>;
+  if (!games)
+    return <Typography>Enter your bgg username to view your plays.</Typography>;
   if (games.length === 0)
-    return 'Mark some games as owned on bgg to see this chart.';
+    return (
+      <Typography>
+        Mark some games as owned on bgg to see this chart.
+      </Typography>
+    );
 
   const playAmounts = groupByPlays(games);
   const noRecordedPlays = !playAmounts.slice(1).find(a => a.games.length);

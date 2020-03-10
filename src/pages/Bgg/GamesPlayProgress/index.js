@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { grey } from '@material-ui/core/colors';
 import { makeStyles } from '@material-ui/core/styles';
 import { isValid, format, subDays } from 'date-fns';
+import Typography from '@material-ui/core/Typography';
 import { last } from '../../../utils/arrayUtils';
 import ParentSize from '../../../components/ParentSize';
 import HighlightedGameInfo from './HighlightedGameInfo';
@@ -63,7 +64,7 @@ const addRatings = (playsPerGame, ratings) => {
   });
 };
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles({
   gamePlayProgress: {
     display: 'flex',
     flexDirection: 'column',
@@ -72,7 +73,7 @@ const useStyles = makeStyles(theme => ({
     flex: 1,
     overflow: 'auto',
   },
-}));
+});
 
 const GamesPlayProgress = ({
   isFetching,
@@ -85,10 +86,13 @@ const GamesPlayProgress = ({
   const classes = useStyles();
   const [highlightedGame, setHighlightedGame] = useState();
 
-  if (isFetching) return `Fetching games for ${username}...`;
-  if (hasError) return 'An error occured... sorry!';
-  if (!plays) return 'Enter your bgg username to view your plays.';
-  if (plays.length === 0) return 'Log your plays on bgg to see this chart.';
+  if (isFetching)
+    return <Typography>{`Fetching games for ${username}...`}</Typography>;
+  if (hasError) return <Typography>An error occured... sorry!</Typography>;
+  if (!plays)
+    return <Typography>Enter your bgg username to view your plays.</Typography>;
+  if (plays.length === 0)
+    return <Typography>Log your plays on bgg to see this chart.</Typography>;
 
   const playsPerGame = groupByGame(plays);
   addRatings(playsPerGame, ratings);
