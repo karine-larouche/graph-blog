@@ -80,7 +80,7 @@ const PlaysForOwnedGames = ({
   className,
 }) => {
   const classes = useStyles();
-  const [selectedIndex, setSelectedIndex] = useState(0);
+  const [selectedIndex, setSelectedIndex] = useState();
 
   if (isFetching)
     return <Typography>{`Fetching games for ${username}...`}</Typography>;
@@ -111,13 +111,7 @@ const PlaysForOwnedGames = ({
         />
         <Legend playAmounts={playAmounts} className={classes.legend} />
       </div>
-      <List
-        label={selected.label}
-        color={selected.color}
-        games={selected.games}
-        showAmount={selected.showAmount}
-        className={classes.list}
-      />
+      <List selected={selected} className={classes.list} />
     </div>
   );
 };

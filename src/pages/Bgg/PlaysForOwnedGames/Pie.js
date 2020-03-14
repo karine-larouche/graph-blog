@@ -52,8 +52,12 @@ Pie.propTypes = {
       games: PropTypes.array,
     }),
   ).isRequired,
-  selectedIndex: PropTypes.number.isRequired,
+  selectedIndex: PropTypes.number,
   onSectionSelection: PropTypes.func.isRequired,
+};
+
+Pie.defaultProps = {
+  selectedIndex: undefined,
 };
 
 export default Pie;
