@@ -1,10 +1,7 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
-import {
-  gameWithPlayProgress as gameWithPlayProgressShape,
-  ratingColors as ratingColorsShape,
-} from './propTypes';
+import { gameWithPlayProgressShape, ratingColorsShape } from './utils';
 import { last } from '../../../utils/arrayUtils';
 
 const useStyles = makeStyles(theme => ({

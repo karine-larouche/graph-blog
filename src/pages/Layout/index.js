@@ -43,7 +43,13 @@ const Layout = () => {
         <AppBar showMenuButton={!open} openMenu={() => setOpen(true)} />
         <main className={classes.main}>
           <Switch>
-            <Route path={['/bgg-owned-games', '/bgg-play-progress']}>
+            <Route
+              path={[
+                '/bgg-owned-games',
+                '/bgg-play-progress-by-game',
+                '/bgg-play-progress-grouped',
+              ]}
+            >
               <Bgg />
             </Route>
             <Route exact path="/">

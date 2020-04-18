@@ -25,7 +25,7 @@ const ratingColors = {
 
 const groupByGame = plays => {
   const playsByGame = plays.reduceRight((games, play) => {
-    if (isValid(new Date(play.date))) {
+    if (isValid(new Date(play.date)) && play.quantity !== 0) {
       const game = games[play.name];
       if (game) {
         if (last(game.totalPlays).date === play.date) {

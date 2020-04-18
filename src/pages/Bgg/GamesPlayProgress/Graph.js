@@ -8,10 +8,7 @@ import { scaleTime, scaleLinear } from '@vx/scale';
 import { curveMonotoneX } from '@vx/curve';
 import { subDays } from 'date-fns';
 import { last, min, max } from '../../../utils/arrayUtils';
-import {
-  gameWithPlayProgress as gameWithPlayProgressShape,
-  ratingColors as ratingColorsShape,
-} from './propTypes';
+import { gameWithPlayProgressShape, ratingColorsShape } from './utils';
 
 const GamesPlayProgressGraph = ({
   playsPerGame,

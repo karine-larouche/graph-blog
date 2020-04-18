@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 
-export const gameWithPlayProgress = PropTypes.shape({
+export const gameWithPlayProgressShape = PropTypes.shape({
   name: PropTypes.string.isRequired,
   totalPlays: PropTypes.arrayOf(
     PropTypes.shape({
@@ -10,7 +10,7 @@ export const gameWithPlayProgress = PropTypes.shape({
   ).isRequired,
 });
 
-export const ratingColors = PropTypes.shape({
+export const ratingColorsShape = PropTypes.shape({
   1: PropTypes.string.isRequired,
   2: PropTypes.string.isRequired,
   3: PropTypes.string.isRequired,

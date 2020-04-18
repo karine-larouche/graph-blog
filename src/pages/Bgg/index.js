@@ -7,6 +7,7 @@ import getRatings from './data/ratings';
 import getPlays from './data/plays';
 import PlaysForOwnedGames from './PlaysForOwnedGames';
 import GamesPlayProgress from './GamesPlayProgress';
+import GroupedPlayProgress from './GroupedPlayProgress';
 import { analytics } from '../../firebase';
 
 const useStyles = makeStyles(theme => ({
@@ -88,13 +89,23 @@ const Bgg = () => {
             className={classes.owned}
           />
         </Route>
-        <Route path="/bgg-play-progress">
+        <Route path="/bgg-play-progress-by-game">
           <GamesPlayProgress
             key={plays}
             isFetching={isFetching}
             hasError={hasError}
             plays={plays}
             ratings={ratings}
+            username={username}
+            className={classes.plays}
+          />
+        </Route>
+        <Route path="/bgg-play-progress-grouped">
+          <GroupedPlayProgress
+            key={plays}
+            isFetching={isFetching}
+            hasError={hasError}
+            plays={plays}
             username={username}
             className={classes.plays}
           />
