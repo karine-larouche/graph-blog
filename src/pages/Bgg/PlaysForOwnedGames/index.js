@@ -4,6 +4,7 @@ import { red, orange, amber, lightGreen } from '@material-ui/core/colors';
 import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import { sortBy } from '../../../utils/arrayUtils';
+import BggInstructions from '../../../components/BggInstruction';
 import Pie from './Pie';
 import Legend from './Legend';
 import List from './List';
@@ -85,8 +86,7 @@ const PlaysForOwnedGames = ({
   if (isFetching)
     return <Typography>{`Fetching games for ${username}...`}</Typography>;
   if (hasError) return <Typography>An error occured... sorry!</Typography>;
-  if (!games)
-    return <Typography>Enter your bgg username to view your plays.</Typography>;
+  if (!games) return <BggInstructions />;
   if (games.length === 0)
     return (
       <Typography>

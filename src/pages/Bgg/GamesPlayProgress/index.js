@@ -6,6 +6,7 @@ import { isValid, format, subDays } from 'date-fns';
 import Typography from '@material-ui/core/Typography';
 import { last } from '../../../utils/arrayUtils';
 import ParentSize from '../../../components/ParentSize';
+import BggInstructions from '../../../components/BggInstruction';
 import HighlightedGameInfo from './HighlightedGameInfo';
 import Graph from './Graph';
 
@@ -89,8 +90,7 @@ const GamesPlayProgress = ({
   if (isFetching)
     return <Typography>{`Fetching games for ${username}...`}</Typography>;
   if (hasError) return <Typography>An error occured... sorry!</Typography>;
-  if (!plays)
-    return <Typography>Enter your bgg username to view your plays.</Typography>;
+  if (!plays) return <BggInstructions />;
   if (plays.length === 0)
     return <Typography>Log your plays on bgg to see this chart.</Typography>;
 

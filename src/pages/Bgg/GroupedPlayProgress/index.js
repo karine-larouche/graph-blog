@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import ParentSize from '../../../components/ParentSize';
+import BggInstructions from '../../../components/BggInstruction';
 import formatData from './formatData';
 import Graph from './Graph';
 
@@ -29,8 +30,7 @@ const GroupedPlayProgress = ({
   if (isFetching)
     return <Typography>{`Fetching games for ${username}...`}</Typography>;
   if (hasError) return <Typography>An error occured... sorry!</Typography>;
-  if (!plays)
-    return <Typography>Enter your bgg username to view your plays.</Typography>;
+  if (!plays) return <BggInstructions />;
   if (plays.length === 0)
     return <Typography>Log your plays on bgg to see this chart.</Typography>;
 
