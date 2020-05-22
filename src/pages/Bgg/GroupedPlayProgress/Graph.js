@@ -66,8 +66,9 @@ const GroupedPlayProgressGraph = ({ playsOverTime, width, height }) => {
         y1={y1}
       >
         {({ stacks, path }) => {
-          return stacks.reverse().map((stack, i) => {
-            return (
+          return stacks
+            .reverse()
+            .map((stack, i) => (
               <path
                 key={`stack-${stack.key}`}
                 d={path(stack)}
@@ -75,10 +76,8 @@ const GroupedPlayProgressGraph = ({ playsOverTime, width, height }) => {
                 strokeWidth={2}
                 strokeLinejoin="bevel"
                 fill={hexToRgba(colors[i], 0.6)}
-                // onClick={event => alert(`${stack.key}`)}
               />
-            );
-          });
+            ));
         }}
       </AreaStack>
       <rect

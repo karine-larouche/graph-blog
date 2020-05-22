@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
 import { grey } from '@material-ui/core/colors';
 import { makeStyles } from '@material-ui/core/styles';
@@ -63,7 +63,11 @@ const addRatings = (playsPerGame, ratings) => {
       playedGame.rating = ratedGame.rating;
     }
   });
+  return playsPerGame;
 };
+
+const formatData = (plays, ratings) =>
+  plays && ratings ? addRatings(groupByGame(plays), ratings) : null;
 
 const useStyles = makeStyles({
   gamePlayProgress: {
@@ -86,6 +90,10 @@ const GamesPlayProgress = ({
 }) => {
   const classes = useStyles();
   const [highlightedGame, setHighlightedGame] = useState();
+  const playsPerGame = useMemo(() => formatData(plays, ratings), [
+    plays,
+    ratings,
+  ]);
 
   if (isFetching)
     return <Typography>{`Fetching games for ${username}...`}</Typography>;
@@ -93,9 +101,6 @@ const GamesPlayProgress = ({
   if (!plays) return <BggInstructions />;
   if (plays.length === 0)
     return <Typography>Log your plays on bgg to see this chart.</Typography>;
-
-  const playsPerGame = groupByGame(plays);
-  addRatings(playsPerGame, ratings);
 
   return (
     <div className={`${classes.gamePlayProgress} ${className}`}>
