@@ -1,7 +1,8 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
-import { gameWithPlayProgressShape, ratingColorsShape } from './utils';
+import { gameWithPlayProgressShape } from './utils';
 import { last } from '../../../utils/arrayUtils';
 
 const useStyles = makeStyles(theme => ({
@@ -13,7 +14,8 @@ const useStyles = makeStyles(theme => ({
   },
   rating: {
     marginLeft: theme.spacing(2),
-    width: 30,
+    minWidth: 30,
+    padding: '0 4px',
     height: 30,
     display: 'flex',
     alignItems: 'center',
@@ -25,7 +27,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const HighlightedGameInfo = ({ highlightedGame, ratingColors }) => {
+const HighlightedGameInfo = ({ highlightedGame, getRatingColor }) => {
   const classes = useStyles();
 
   return (
@@ -36,9 +38,11 @@ const HighlightedGameInfo = ({ highlightedGame, ratingColors }) => {
           {highlightedGame.rating && (
             <div
               className={classes.rating}
-              style={{ backgroundColor: ratingColors[highlightedGame.rating] }}
+              style={{
+                backgroundColor: getRatingColor(highlightedGame.rating),
+              }}
             >
-              <Typography>{highlightedGame.rating}</Typography>
+              <Typography variant="body2">{highlightedGame.rating}</Typography>
             </div>
           )}
           <Typography className={classes.totalPlays}>
@@ -54,7 +58,7 @@ const HighlightedGameInfo = ({ highlightedGame, ratingColors }) => {
 
 HighlightedGameInfo.propTypes = {
   highlightedGame: gameWithPlayProgressShape,
-  ratingColors: ratingColorsShape.isRequired,
+  getRatingColor: PropTypes.func.isRequired,
 };
 
 HighlightedGameInfo.defaultProps = {

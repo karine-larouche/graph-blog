@@ -9,19 +9,29 @@ import ParentSize from '../../../components/ParentSize';
 import BggInstructions from '../../../components/BggInstruction';
 import HighlightedGameInfo from './HighlightedGameInfo';
 import Graph from './Graph';
+import { mix } from '../../../utils/colorUtils';
 
 const ratingColors = {
-  1: '#f00',
-  2: '#f36',
-  3: '#f69',
-  4: '#f6c',
-  5: '#c9f',
-  6: '#99f',
-  7: '#9ff',
-  8: '#6f9',
-  9: '#3c9',
-  10: '#0c0',
+  1: '#ff0000',
+  2: '#ff3366',
+  3: '#ff6699',
+  4: '#ff66cc',
+  5: '#cc99ff',
+  6: '#9999ff',
+  7: '#99ffff',
+  8: '#66ff99',
+  9: '#33cc99',
+  10: '#00cc00',
   undefined: grey[700],
+};
+
+const getRatingColor = rating => {
+  if (!rating) return ratingColors[undefined];
+  return mix(
+    ratingColors[Math.floor(rating)],
+    ratingColors[Math.ceil(rating)],
+    (rating % 1) * 100,
+  );
 };
 
 const groupByGame = plays => {
@@ -106,14 +116,14 @@ const GamesPlayProgress = ({
     <div className={`${classes.gamePlayProgress} ${className}`}>
       <HighlightedGameInfo
         highlightedGame={highlightedGame}
-        ratingColors={ratingColors}
+        getRatingColor={getRatingColor}
       />
       <div className={classes.graph}>
         <ParentSize>
           {({ width, height }) => (
             <Graph
               playsPerGame={playsPerGame}
-              ratingColors={ratingColors}
+              getRatingColor={getRatingColor}
               highlightedGame={highlightedGame}
               setHighlightedGame={setHighlightedGame}
               width={width}

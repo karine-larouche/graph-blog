@@ -7,7 +7,7 @@ const parseGames = data => {
   const document = new DOMParser().parseFromString(data, 'text/xml');
   return [...document.getElementsByTagName('item')].map(i => ({
     name: i.getElementsByTagName('name')[0].childNodes[0].nodeValue,
-    rating: parseInt(
+    rating: parseFloat(
       i
         .getElementsByTagName('stats')[0]
         .getElementsByTagName('rating')[0]

@@ -8,20 +8,20 @@ import { scaleTime, scaleLinear } from '@vx/scale';
 import { curveMonotoneX } from '@vx/curve';
 import { subDays } from 'date-fns';
 import { last, min, max } from '../../../utils/arrayUtils';
-import { gameWithPlayProgressShape, ratingColorsShape } from './utils';
+import { gameWithPlayProgressShape } from './utils';
 
 const borderWidth = 4;
 
 /* eslint-disable react/prop-types */
 const SingleLine = React.memo(
-  ({ game, isHighlighted, setHighlightedGame, ratingColors, x, y }) => (
+  ({ game, isHighlighted, setHighlightedGame, getRatingColor, x, y }) => (
     <LinePath
       id={`line-path-${game.name}`}
       key={game.name}
       data={game.totalPlays}
       x={x}
       y={y}
-      stroke={ratingColors[game.rating]}
+      stroke={getRatingColor(game.rating)}
       fill="none"
       opacity={isHighlighted ? 1 : 0.6}
       strokeWidth={isHighlighted ? 4 : 3}
@@ -34,7 +34,7 @@ const SingleLine = React.memo(
 
 const GamesPlayProgressGraph = ({
   playsPerGame,
-  ratingColors,
+  getRatingColor,
   highlightedGame,
   setHighlightedGame,
   width,
@@ -65,7 +65,7 @@ const GamesPlayProgressGraph = ({
             game={game}
             isHighlighted={isHighlighted(game)}
             setHighlightedGame={setHighlightedGame}
-            ratingColors={ratingColors}
+            getRatingColor={getRatingColor}
             x={x}
             y={y}
           />
@@ -103,7 +103,7 @@ const GamesPlayProgressGraph = ({
 
 GamesPlayProgressGraph.propTypes = {
   playsPerGame: PropTypes.arrayOf(gameWithPlayProgressShape).isRequired,
-  ratingColors: ratingColorsShape.isRequired,
+  getRatingColor: PropTypes.func.isRequired,
   highlightedGame: gameWithPlayProgressShape,
   setHighlightedGame: PropTypes.func.isRequired,
   width: PropTypes.number.isRequired,
