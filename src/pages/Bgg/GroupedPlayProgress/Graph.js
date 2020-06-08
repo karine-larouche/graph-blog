@@ -8,14 +8,23 @@ import {
   cyan,
   pink,
 } from '@material-ui/core/colors';
+import { makeStyles } from '@material-ui/core/styles';
+import { format, isSameDay, differenceInCalendarMonths } from 'date-fns';
 import { AreaStack } from '@vx/shape';
 import { scaleTime, scaleLinear } from '@vx/scale';
-import { last } from '../../../utils/arrayUtils';
+import { AxisBottom } from '@vx/axis';
+import { last, range } from '../../../utils/arrayUtils';
 import { hexToRgba } from '../../../utils/colorUtils';
 import {
   playAmountBreakdown as labels,
   playGroupsForMonthShape,
 } from './utils';
+
+const useStyles = makeStyles({
+  tickLines: {
+    strokeWidth: 2,
+  },
+});
 
 const colors = [
   orange[800],
@@ -32,13 +41,22 @@ const colors = [
 ];
 
 const GroupedPlayProgressGraph = ({ playsOverTime, width, height }) => {
-  const borderWidth = 4;
+  const classes = useStyles();
+
+  const scalePadding = 16;
+  const horizontalPadding = 8;
+  const graphPosition = {
+    top: 1,
+    bottom: height - scalePadding,
+    left: horizontalPadding,
+    right: width - horizontalPadding,
+  };
 
   const firstMonth = new Date(`${playsOverTime[0].month}-01T00:00`);
   const lastMonth = new Date(`${last(playsOverTime).month}-01T00:00`);
   const xScale = scaleTime({
     domain: [firstMonth, lastMonth],
-    range: [borderWidth, width - borderWidth],
+    range: [graphPosition.left, graphPosition.right],
   });
 
   const allTimeTotalPlays = labels.reduce(
@@ -47,12 +65,17 @@ const GroupedPlayProgressGraph = ({ playsOverTime, width, height }) => {
   );
   const yScale = scaleLinear({
     domain: [0, allTimeTotalPlays],
-    range: [height - borderWidth, borderWidth],
+    range: [graphPosition.bottom, graphPosition.top],
   });
 
   const x = d => xScale(new Date(`${d.data.month}-01T00:00`));
   const y0 = d => yScale(d[0]);
   const y1 = d => yScale(d[1]);
+
+  const showXAxis = differenceInCalendarMonths(lastMonth, firstMonth) >= 12;
+  const years = range(firstMonth.getFullYear(), lastMonth.getFullYear());
+  const tickValues = years.map(y => new Date(`${y - 1}-12-01T00:00`));
+  const tickLabelValues = years.map(y => new Date(`${y}-06-01T00:00`));
 
   return (
     <svg viewBox={`0 0 ${width} ${height}`} height={`${height}px`}>
@@ -80,17 +103,38 @@ const GroupedPlayProgressGraph = ({ playsOverTime, width, height }) => {
             ));
         }}
       </AreaStack>
-      <rect
-        x={borderWidth / 2}
-        y={borderWidth / 2}
-        width={width - borderWidth}
-        height={height - borderWidth}
-        fill="none"
-        stroke={grey[300]}
-        strokeWidth={borderWidth}
-        rx={4}
-        ry={4}
-      />
+      {showXAxis && (
+        <>
+          <AxisBottom
+            top={graphPosition.bottom + 2}
+            scale={xScale}
+            tickValues={tickValues}
+            tickFormat={() => ''}
+            hideAxisLine
+            tickStroke={grey[600]}
+            tickClassName={classes.tickLines}
+          />
+          <AxisBottom
+            top={graphPosition.bottom - 4}
+            scale={xScale}
+            tickValues={tickLabelValues}
+            tickFormat={v => format(v, 'yyyy')}
+            tickLabelProps={value => ({
+              fontWeight: 500,
+              fill: grey[600],
+              // eslint-disable-next-line no-nested-ternary
+              textAnchor: isSameDay(value, firstMonth)
+                ? 'start'
+                : isSameDay(value, lastMonth)
+                ? 'end'
+                : 'middle',
+            })}
+            hideAxisLine
+            hideTicks
+            tickClassName="tickLabels"
+          />
+        </>
+      )}
     </svg>
   );
 };
