@@ -9,7 +9,13 @@ import {
   pink,
 } from '@material-ui/core/colors';
 import { makeStyles } from '@material-ui/core/styles';
-import { format, isSameDay, differenceInCalendarMonths } from 'date-fns';
+import {
+  format,
+  isSameDay,
+  differenceInCalendarMonths,
+  isBefore,
+  isAfter,
+} from 'date-fns';
 import { AreaStack } from '@vx/shape';
 import { scaleTime, scaleLinear } from '@vx/scale';
 import { AxisBottom } from '@vx/axis';
@@ -74,8 +80,13 @@ const GroupedPlayProgressGraph = ({ playsOverTime, width, height }) => {
 
   const showXAxis = differenceInCalendarMonths(lastMonth, firstMonth) >= 12;
   const years = range(firstMonth.getFullYear(), lastMonth.getFullYear());
-  const tickValues = years.map(y => new Date(`${y - 1}-12-01T00:00`));
-  const tickLabelValues = years.map(y => new Date(`${y}-06-01T00:00`));
+  const isWithinRange = d => !isBefore(d, firstMonth) && !isAfter(d, lastMonth);
+  const tickValues = years
+    .map(y => new Date(`${y - 1}-12-01T00:00`))
+    .filter(isWithinRange);
+  const tickLabelValues = years
+    .map(y => new Date(`${y}-06-01T00:00`))
+    .filter(isWithinRange);
 
   return (
     <svg viewBox={`0 0 ${width} ${height}`} height={`${height}px`}>
