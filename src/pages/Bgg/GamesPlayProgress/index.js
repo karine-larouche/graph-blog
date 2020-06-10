@@ -4,12 +4,12 @@ import { grey } from '@material-ui/core/colors';
 import { makeStyles } from '@material-ui/core/styles';
 import { isValid, format, subDays } from 'date-fns';
 import Typography from '@material-ui/core/Typography';
+import { mix } from 'colour-utils';
 import { last } from '../../../utils/arrayUtils';
 import ParentSize from '../../../components/ParentSize';
 import BggInstructions from '../../../components/BggInstruction';
 import HighlightedGameInfo from './HighlightedGameInfo';
 import Graph from './Graph';
-import { mix } from '../../../utils/colorUtils';
 
 const ratingColors = {
   1: '#ff0000',
@@ -30,7 +30,7 @@ const getRatingColor = rating => {
   return mix(
     ratingColors[Math.floor(rating)],
     ratingColors[Math.ceil(rating)],
-    (rating % 1) * 100,
+    rating % 1,
   );
 };
 
