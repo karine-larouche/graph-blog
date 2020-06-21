@@ -8,29 +8,16 @@ import {
   cyan,
   pink,
 } from '@material-ui/core/colors';
-import { makeStyles } from '@material-ui/core/styles';
-import {
-  format,
-  isSameDay,
-  differenceInCalendarMonths,
-  isBefore,
-  isAfter,
-} from 'date-fns';
+import { isBefore, isAfter } from 'date-fns';
 import { AreaStack } from '@vx/shape';
 import { scaleTime, scaleLinear } from '@vx/scale';
-import { AxisBottom } from '@vx/axis';
 import { last, range } from '../../../utils/arrayUtils';
 import { hexToRgba } from '../../../utils/colorUtils';
+import XAxis from '../../../components/XAxis';
 import {
   playAmountBreakdown as labels,
   playGroupsForMonthShape,
 } from './utils';
-
-const useStyles = makeStyles({
-  tickLines: {
-    strokeWidth: 2,
-  },
-});
 
 const colors = [
   orange[800],
@@ -47,8 +34,6 @@ const colors = [
 ];
 
 const GroupedPlayProgressGraph = ({ playsOverTime, width, height }) => {
-  const classes = useStyles();
-
   const scalePadding = 16;
   const horizontalPadding = 8;
   const graphPosition = {
@@ -78,7 +63,6 @@ const GroupedPlayProgressGraph = ({ playsOverTime, width, height }) => {
   const y0 = d => yScale(d[0]);
   const y1 = d => yScale(d[1]);
 
-  const showXAxis = differenceInCalendarMonths(lastMonth, firstMonth) >= 12;
   const years = range(firstMonth.getFullYear(), lastMonth.getFullYear());
   const isWithinRange = d => !isBefore(d, firstMonth) && !isAfter(d, lastMonth);
   const tickValues = years
@@ -114,38 +98,16 @@ const GroupedPlayProgressGraph = ({ playsOverTime, width, height }) => {
             ));
         }}
       </AreaStack>
-      {showXAxis && (
-        <>
-          <AxisBottom
-            top={graphPosition.bottom + 2}
-            scale={xScale}
-            tickValues={tickValues}
-            tickFormat={() => ''}
-            hideAxisLine
-            tickStroke={grey[600]}
-            tickClassName={classes.tickLines}
-          />
-          <AxisBottom
-            top={graphPosition.bottom - 4}
-            scale={xScale}
-            tickValues={tickLabelValues}
-            tickFormat={v => format(v, 'yyyy')}
-            tickLabelProps={value => ({
-              fontWeight: 500,
-              fill: grey[600],
-              // eslint-disable-next-line no-nested-ternary
-              textAnchor: isSameDay(value, firstMonth)
-                ? 'start'
-                : isSameDay(value, lastMonth)
-                ? 'end'
-                : 'middle',
-            })}
-            hideAxisLine
-            hideTicks
-            tickClassName="tickLabels"
-          />
-        </>
-      )}
+      <XAxis
+        start={firstMonth}
+        end={lastMonth}
+        tickValues={tickValues}
+        tickLabelValues={tickLabelValues}
+        xScale={xScale}
+        graphPosition={graphPosition}
+        color={grey[600]}
+        hideAxisLine
+      />
     </svg>
   );
 };

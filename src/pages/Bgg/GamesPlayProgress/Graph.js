@@ -1,33 +1,18 @@
 import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
-import { makeStyles } from '@material-ui/core/styles';
 import { grey } from '@material-ui/core/colors';
 import { Group } from '@vx/group';
 import { GlyphDot } from '@vx/glyph';
 import { LinePath } from '@vx/shape';
 import { scaleTime, scaleLinear } from '@vx/scale';
 import { curveMonotoneX } from '@vx/curve';
-import { AxisBottom } from '@vx/axis';
-import {
-  subDays,
-  differenceInCalendarMonths,
-  isSameMonth,
-  format,
-  isAfter,
-  isBefore,
-} from 'date-fns';
+import { subDays, isAfter, isBefore } from 'date-fns';
 import { last, min, max, range } from '../../../utils/arrayUtils';
+import XAxis from '../../../components/XAxis';
 import { gameWithPlayProgressShape } from './utils';
 
 const scalePadding = 16;
 const horizontalPadding = 8;
-
-const useStyles = makeStyles({
-  tickLines: {
-    strokeWidth: 2,
-    transform: 'translate(0, 1px)',
-  },
-});
 
 /* eslint-disable react/prop-types */
 const SingleLine = React.memo(
@@ -57,8 +42,6 @@ const GamesPlayProgressGraph = ({
   width,
   height,
 }) => {
-  const classes = useStyles();
-
   const [x, y, xScale, start, end, graphPosition] = useMemo(() => {
     const position = {
       top: 1,
@@ -93,7 +76,6 @@ const GamesPlayProgressGraph = ({
   const isHighlighted = game =>
     Boolean(highlightedGame) && highlightedGame.name === game.name;
 
-  const showXAxis = differenceInCalendarMonths(end, start) >= 12;
   const years = range(start.getFullYear(), end.getFullYear());
   const isWithinRange = d => isAfter(d, start) && isBefore(d, end);
   const tickValues = years
@@ -133,41 +115,15 @@ const GamesPlayProgressGraph = ({
             </g>
           ))}
       </Group>
-      {showXAxis && (
-        <>
-          <AxisBottom
-            top={graphPosition.bottom}
-            scale={xScale}
-            tickValues={tickValues}
-            tickFormat={() => ''}
-            tickStroke={grey[800]}
-            stroke={grey[800]}
-            strokeWidth={2}
-            tickLength={14}
-            tickClassName={classes.tickLines}
-          />
-          <AxisBottom
-            top={graphPosition.bottom - 4}
-            scale={xScale}
-            tickValues={tickLabelValues}
-            tickFormat={v => format(v, 'yyyy')}
-            tickLabelProps={value => ({
-              fontWeight: 500,
-              fill: grey[800],
-              textAnchor:
-                // eslint-disable-next-line no-nested-ternary
-                differenceInCalendarMonths(value, start) <= 1
-                  ? 'start'
-                  : isSameMonth(value, end)
-                  ? 'end'
-                  : 'middle',
-            })}
-            hideAxisLine
-            hideTicks
-            tickClassName="tickLabels"
-          />
-        </>
-      )}
+      <XAxis
+        start={start}
+        end={end}
+        tickValues={tickValues}
+        tickLabelValues={tickLabelValues}
+        xScale={xScale}
+        graphPosition={graphPosition}
+        color={grey[800]}
+      />
     </svg>
   );
 };
