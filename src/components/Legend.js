@@ -17,18 +17,18 @@ const useStyles = makeStyles({
   },
 });
 
-const Legend = ({ playAmounts, className }) => {
+const Legend = ({ data, className }) => {
   const classes = useStyles();
 
   return (
     <div className={className}>
-      {playAmounts.map(playAmount => (
-        <div key={playAmount.label} className={classes.legendItem}>
+      {data.map(d => (
+        <div key={d.label} className={classes.legendItem}>
           <div
             className={classes.legendColor}
-            style={{ backgroundColor: playAmount.color }}
+            style={{ backgroundColor: d.color }}
           />
-          <Typography>{playAmount.label}</Typography>
+          <Typography>{d.label}</Typography>
         </div>
       ))}
     </div>
@@ -36,11 +36,10 @@ const Legend = ({ playAmounts, className }) => {
 };
 
 Legend.propTypes = {
-  playAmounts: PropTypes.arrayOf(
+  data: PropTypes.arrayOf(
     PropTypes.shape({
       label: PropTypes.string.isRequired,
       color: PropTypes.string.isRequired,
-      games: PropTypes.array,
     }),
   ).isRequired,
 };

@@ -25,6 +25,7 @@ const useStyles = makeStyles(theme => ({
       width: theme.breakpoints.values.lg - drawerWidth,
       margin: '0 auto',
     },
+    background: theme.palette.background.default,
   },
   welcome: {
     margin: 20,

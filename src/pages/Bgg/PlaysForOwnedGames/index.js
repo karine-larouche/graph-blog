@@ -5,8 +5,8 @@ import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import { sortBy } from '../../../utils/arrayUtils';
 import BggInstructions from '../../../components/BggInstruction';
+import Legend from '../../../components/Legend';
 import Pie from './Pie';
-import Legend from './Legend';
 import List from './List';
 
 const emptyPlayGroups = () => [
@@ -109,7 +109,7 @@ const PlaysForOwnedGames = ({
           onSectionSelection={setSelectedIndex}
           className={classes.pie}
         />
-        <Legend playAmounts={playAmounts} className={classes.legend} />
+        <Legend data={playAmounts} className={classes.legend} />
       </div>
       <List selected={selected} className={classes.list} />
     </div>

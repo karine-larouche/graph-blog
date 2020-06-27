@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { makeStyles } from '@material-ui/core';
 import {
   grey,
   orange,
@@ -14,26 +15,49 @@ import { scaleTime, scaleLinear } from '@vx/scale';
 import { last, range } from '../../../utils/arrayUtils';
 import { hexToRgba } from '../../../utils/colorUtils';
 import XAxis from '../../../components/XAxis';
+import Legend from '../../../components/Legend';
 import {
   playAmountBreakdown as labels,
   playGroupsForMonthShape,
 } from './utils';
 
-const colors = [
-  orange[800],
-  amber[500],
-  lightGreen[500],
-  lightGreen[700],
-  cyan[400],
-  cyan[500],
-  cyan[600],
-  cyan[700],
-  cyan[800],
-  pink[700],
-  pink[900],
+const groups = [
+  { label: '1 play', color: orange[800] },
+  { label: '2 plays', color: amber[500] },
+  { label: '3 plays', color: lightGreen[500] },
+  { label: '4 plays', color: lightGreen[700] },
+  { label: '5 plays', color: cyan[400] },
+  { label: '6 plays', color: cyan[500] },
+  { label: '7 plays', color: cyan[600] },
+  { label: '8 plays', color: cyan[700] },
+  { label: '9 plays', color: cyan[800] },
+  { label: '10-24 plays', color: pink[700] },
+  { label: '25+ plays', color: pink[900] },
 ];
 
+const colors = groups.map(g => g.color);
+
+const useStyles = makeStyles(theme => ({
+  legend: {
+    position: 'absolute',
+    top: 0,
+    background: hexToRgba(theme.palette.background.default, 0.7),
+    margin: 8,
+    boxShadow: `0 0 8px 6px ${hexToRgba(
+      theme.palette.background.default,
+      0.7,
+    )}`,
+    borderBottomRightRadius: 16,
+  },
+  container: {
+    position: 'relative',
+    height: '100%',
+  },
+}));
+
 const GroupedPlayProgressGraph = ({ playsOverTime, width, height }) => {
+  const classes = useStyles();
+
   const scalePadding = 16;
   const horizontalPadding = 8;
   const graphPosition = {
@@ -73,42 +97,45 @@ const GroupedPlayProgressGraph = ({ playsOverTime, width, height }) => {
     .filter(isWithinRange);
 
   return (
-    <svg viewBox={`0 0 ${width} ${height}`} height={`${height}px`}>
-      <AreaStack
-        top={0}
-        left={0}
-        keys={labels}
-        data={playsOverTime}
-        x={x}
-        y0={y0}
-        y1={y1}
-      >
-        {({ stacks, path }) => {
-          return stacks
-            .reverse()
-            .map((stack, i) => (
-              <path
-                key={`stack-${stack.key}`}
-                d={path(stack)}
-                stroke={colors[i]}
-                strokeWidth={2}
-                strokeLinejoin="bevel"
-                fill={hexToRgba(colors[i], 0.6)}
-              />
-            ));
-        }}
-      </AreaStack>
-      <XAxis
-        start={firstMonth}
-        end={lastMonth}
-        tickValues={tickValues}
-        tickLabelValues={tickLabelValues}
-        xScale={xScale}
-        graphPosition={graphPosition}
-        color={grey[600]}
-        hideAxisLine
-      />
-    </svg>
+    <div className={classes.container}>
+      <svg viewBox={`0 0 ${width} ${height}`} height={`${height}px`}>
+        <AreaStack
+          top={0}
+          left={0}
+          keys={labels}
+          data={playsOverTime}
+          x={x}
+          y0={y0}
+          y1={y1}
+        >
+          {({ stacks, path }) => {
+            return stacks
+              .reverse()
+              .map((stack, i) => (
+                <path
+                  key={`stack-${stack.key}`}
+                  d={path(stack)}
+                  stroke={colors[i]}
+                  strokeWidth={2}
+                  strokeLinejoin="bevel"
+                  fill={hexToRgba(colors[i], 0.6)}
+                />
+              ));
+          }}
+        </AreaStack>
+        <XAxis
+          start={firstMonth}
+          end={lastMonth}
+          tickValues={tickValues}
+          tickLabelValues={tickLabelValues}
+          xScale={xScale}
+          graphPosition={graphPosition}
+          color={grey[600]}
+          hideAxisLine
+        />
+      </svg>
+      <Legend data={groups} className={classes.legend} />
+    </div>
   );
 };
 
