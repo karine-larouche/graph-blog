@@ -73,7 +73,14 @@ const Menu = ({ isOpen, close }) => {
           </ListItem>
           <ListItem>
             <ListItemText>
-              <Link to="/bgg-play-progress-by-game">BGG - Play Progress</Link>
+              <Link to="/bgg-play-progress-grouped">BGG - Play Progress</Link>
+            </ListItemText>
+          </ListItem>
+          <ListItem>
+            <ListItemText>
+              <Link to="/bgg-play-progress-by-game">
+                BGG - Play Progress by Game
+              </Link>
             </ListItemText>
           </ListItem>
         </List>
