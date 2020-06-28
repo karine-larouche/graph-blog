@@ -16,7 +16,10 @@ const parseGames = data => {
   }));
 };
 
-export default async username => {
-  const result = await fetchWithRetry(playedAndRatedGamesUrl(username));
-  return result && result.status === 200 ? parseGames(result.data) : undefined;
+export default async (username, errorState) => {
+  const result = await fetchWithRetry(
+    playedAndRatedGamesUrl(username),
+    errorState,
+  );
+  return result && parseGames(result.data);
 };

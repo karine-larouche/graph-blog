@@ -13,9 +13,7 @@ const parseOwnedGames = data => {
   }));
 };
 
-export default async username => {
-  const result = await fetchWithRetry(ownedGamesUrl(username));
-  return result && result.status === 200
-    ? parseOwnedGames(result.data)
-    : undefined;
+export default async (username, errorState) => {
+  const result = await fetchWithRetry(ownedGamesUrl(username), errorState);
+  return result && parseOwnedGames(result.data);
 };

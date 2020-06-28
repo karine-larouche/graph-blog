@@ -75,7 +75,7 @@ const useStyles = makeStyles(theme => ({
 
 const PlaysForOwnedGames = ({
   isFetching,
-  hasError,
+  errorState,
   games,
   username,
   className,
@@ -85,7 +85,10 @@ const PlaysForOwnedGames = ({
 
   if (isFetching)
     return <Typography>{`Fetching games for ${username}...`}</Typography>;
-  if (hasError) return <Typography>An error occured... sorry!</Typography>;
+  if (errorState.hasError && errorState.error === 'username')
+    return <Typography>Invalid username</Typography>;
+  if (errorState.hasError)
+    return <Typography>An error occured, please try again</Typography>;
   if (!games) return <BggInstructions />;
   if (games.length === 0)
     return (
@@ -118,7 +121,10 @@ const PlaysForOwnedGames = ({
 
 PlaysForOwnedGames.propTypes = {
   isFetching: PropTypes.bool.isRequired,
-  hasError: PropTypes.bool.isRequired,
+  errorState: PropTypes.shape({
+    hasError: PropTypes.bool.isRequired,
+    error: PropTypes.string,
+  }).isRequired,
   games: PropTypes.arrayOf(
     PropTypes.shape({
       numPlays: PropTypes.number.isRequired,

@@ -31,21 +31,30 @@ const totalPlayPages = data => {
   );
 };
 
-export default async username => {
-  const result = await fetchWithRetry(playsUrl(username));
-  if (!result || result.status !== 200) return undefined;
+const usernameIsInvalid = data => data.includes('Invalid object or user');
+
+export default async (username, errorState) => {
+  const result = await fetchWithRetry(playsUrl(username), errorState);
+  if (!result) return undefined;
+  if (usernameIsInvalid(result.data)) {
+    // eslint-disable-next-line no-param-reassign
+    errorState.hasError = true;
+    // eslint-disable-next-line no-param-reassign
+    errorState.error = 'username';
+    return undefined;
+  }
 
   const plays = parsePlays(result.data);
 
   const playPages = await Promise.all(
     range(2, totalPlayPages(result.data)).map(async page => {
-      const pageResult = await fetchWithRetry(playsUrl(username, page));
-      return pageResult && pageResult.status === 200
-        ? parsePlays(pageResult.data)
-        : undefined;
+      const pageResult = await fetchWithRetry(
+        playsUrl(username, page),
+        errorState,
+      );
+      return pageResult && parsePlays(pageResult.data);
     }),
   );
-  if (playPages.find(p => p === undefined)) return undefined;
 
   return plays.concat(...playPages);
 };

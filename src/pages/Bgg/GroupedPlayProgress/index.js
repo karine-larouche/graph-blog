@@ -20,7 +20,7 @@ const useStyles = makeStyles({
 
 const GroupedPlayProgress = ({
   isFetching,
-  hasError,
+  errorState,
   plays,
   username,
   className,
@@ -29,7 +29,10 @@ const GroupedPlayProgress = ({
 
   if (isFetching)
     return <Typography>{`Fetching games for ${username}...`}</Typography>;
-  if (hasError) return <Typography>An error occured... sorry!</Typography>;
+  if (errorState.hasError && errorState.error === 'username')
+    return <Typography>Invalid username</Typography>;
+  if (errorState.hasError)
+    return <Typography>An error occured, please try again</Typography>;
   if (!plays) return <BggInstructions />;
   if (plays.length === 0)
     return <Typography>Log your plays on bgg to see this chart.</Typography>;
@@ -55,7 +58,10 @@ const GroupedPlayProgress = ({
 
 GroupedPlayProgress.propTypes = {
   isFetching: PropTypes.bool.isRequired,
-  hasError: PropTypes.bool.isRequired,
+  errorState: PropTypes.shape({
+    hasError: PropTypes.bool.isRequired,
+    error: PropTypes.string,
+  }).isRequired,
   plays: PropTypes.arrayOf(
     PropTypes.shape({
       date: PropTypes.string.isRequired,

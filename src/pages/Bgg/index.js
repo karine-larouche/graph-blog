@@ -2,13 +2,32 @@ import React, { useState } from 'react';
 import { Switch, Route } from 'react-router-dom';
 import TextField from '@material-ui/core/TextField';
 import { makeStyles } from '@material-ui/core/styles';
-import getOwnedGames from './data/ownedGames';
-import getRatings from './data/ratings';
-import getPlays from './data/plays';
+import getData from './data';
 import PlaysForOwnedGames from './PlaysForOwnedGames';
 import GamesPlayProgress from './GamesPlayProgress';
 import GroupedPlayProgress from './GroupedPlayProgress';
 import { analytics } from '../../firebase';
+
+const useErrorState = () => {
+  const [errorState, setErrorState] = useState({
+    hasError: false,
+    error: null,
+  });
+
+  const setError = error =>
+    setErrorState({
+      hasError: true,
+      error,
+    });
+
+  const resetErrorState = () =>
+    setErrorState({
+      hasError: false,
+      error: null,
+    });
+
+  return [errorState, setError, resetErrorState];
+};
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -38,31 +57,28 @@ const Bgg = () => {
   const classes = useStyles();
   const [username, setUsername] = useState('');
   const [isFetching, setIsFetching] = useState(false);
-  const [hasError, setHasError] = useState(false);
+  const [errorState, setError, resetErrorState] = useErrorState();
   const [ownedGames, setOwnedGames] = useState();
   const [ratings, setRatings] = useState();
   const [plays, setPlays] = useState();
 
   const fetchData = async event => {
     event.preventDefault();
-    setIsFetching(true);
-    setHasError(false);
-
     analytics.logEvent('bgg_username_submit', { value: username });
 
-    const ownedGamesPromise = getOwnedGames(username);
-    const playsPromise = getPlays(username);
-    const ratingsPromise = getRatings(username);
-    const fetchedOwnedGames = await ownedGamesPromise;
-    const fetchedPlays = await playsPromise;
-    const fetchedRatings = await ratingsPromise;
+    if (!username) return;
 
-    if (fetchedOwnedGames && fetchedPlays && fetchedRatings) {
-      setOwnedGames(fetchedOwnedGames);
-      setPlays(fetchedPlays);
-      setRatings(fetchedRatings);
+    setIsFetching(true);
+    resetErrorState();
+
+    const data = await getData(username);
+
+    if (data.hasError) {
+      setError(data.error);
     } else {
-      setHasError(true);
+      setOwnedGames(data.ownedGames);
+      setPlays(data.plays);
+      setRatings(data.ratings);
     }
 
     setIsFetching(false);
@@ -83,7 +99,7 @@ const Bgg = () => {
         <Route path="/bgg-owned-games">
           <PlaysForOwnedGames
             isFetching={isFetching}
-            hasError={hasError}
+            errorState={errorState}
             games={ownedGames}
             username={username}
             className={classes.owned}
@@ -93,7 +109,7 @@ const Bgg = () => {
           <GamesPlayProgress
             key={plays}
             isFetching={isFetching}
-            hasError={hasError}
+            errorState={errorState}
             plays={plays}
             ratings={ratings}
             username={username}
@@ -104,7 +120,7 @@ const Bgg = () => {
           <GroupedPlayProgress
             key={plays}
             isFetching={isFetching}
-            hasError={hasError}
+            errorState={errorState}
             plays={plays}
             username={username}
             className={classes.plays}
