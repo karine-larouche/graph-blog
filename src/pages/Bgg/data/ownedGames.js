@@ -16,7 +16,7 @@ const ownedGamesUrl = username =>
   `https://www.boardgamegeek.com/xmlapi2/collection?username=${username}&own=1&excludesubtype=boardgameexpansion`;
 
 const sortAndRemoveDuplicates = games =>
-  sortBy(games, 'numPlays').filter(
+  sortBy(sortBy(games, 'name'), 'numPlays', 'desc').filter(
     (game, i, sortedGames) => i === 0 || game.name !== sortedGames[i - 1].name,
   );
 
