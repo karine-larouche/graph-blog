@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import { red, orange, amber, lightGreen } from '@material-ui/core/colors';
 import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
-import { sortBy } from '../../../utils/arrayUtils';
 import BggInstructions from '../../../components/BggInstruction';
 import Legend from '../../../components/Legend';
 import Pie from './Pie';
@@ -29,7 +28,7 @@ const playGroupIndex = numPlays => {
 
 const groupByPlays = games => {
   const grouped = emptyPlayGroups();
-  sortBy(games, 'numPlays').forEach(game => {
+  games.forEach(game => {
     grouped[playGroupIndex(game.numPlays)].games.push(game);
   });
   return grouped;
