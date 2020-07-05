@@ -6,7 +6,10 @@ const playedAndRatedGamesUrl = username =>
 const parseGames = data => {
   const document = new DOMParser().parseFromString(data, 'text/xml');
   return [...document.getElementsByTagName('item')].map(i => ({
-    name: i.getElementsByTagName('name')[0].childNodes[0].nodeValue,
+    name:
+      i.getElementsByTagName('originalname').length > 0
+        ? i.getElementsByTagName('originalname')[0].childNodes[0].nodeValue
+        : i.getElementsByTagName('name')[0].childNodes[0].nodeValue,
     rating: parseFloat(
       i
         .getElementsByTagName('stats')[0]
