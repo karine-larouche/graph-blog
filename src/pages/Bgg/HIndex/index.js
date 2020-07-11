@@ -8,7 +8,7 @@ import formatData from './formatData';
 import Graph from './Graph';
 
 const useStyles = makeStyles({
-  groupedPlayProgress: {
+  hIndex: {
     display: 'flex',
     flexDirection: 'column',
   },
@@ -18,13 +18,7 @@ const useStyles = makeStyles({
   },
 });
 
-const GroupedPlayProgress = ({
-  isFetching,
-  errorState,
-  plays,
-  username,
-  className,
-}) => {
+const HIndex = ({ isFetching, errorState, plays, username, className }) => {
   const classes = useStyles();
 
   if (isFetching)
@@ -37,18 +31,14 @@ const GroupedPlayProgress = ({
   if (plays.length === 0)
     return <Typography>Log your plays on bgg to see this chart.</Typography>;
 
-  const playsOverTime = formatData(plays);
+  const totalPlays = formatData(plays);
 
   return (
-    <div className={`${classes.groupedPlayProgress} ${className}`}>
+    <div className={`${classes.hIndex} ${className}`}>
       <div className={classes.graph}>
         <ParentSize>
           {({ width, height }) => (
-            <Graph
-              playsOverTime={playsOverTime}
-              width={width}
-              height={height}
-            />
+            <Graph totalPlays={totalPlays} width={width} height={height} />
           )}
         </ParentSize>
       </div>
@@ -56,7 +46,7 @@ const GroupedPlayProgress = ({
   );
 };
 
-GroupedPlayProgress.propTypes = {
+HIndex.propTypes = {
   isFetching: PropTypes.bool.isRequired,
   errorState: PropTypes.shape({
     hasError: PropTypes.bool.isRequired,
@@ -72,8 +62,8 @@ GroupedPlayProgress.propTypes = {
   username: PropTypes.string.isRequired,
 };
 
-GroupedPlayProgress.defaultProps = {
+HIndex.defaultProps = {
   plays: undefined,
 };
 
-export default GroupedPlayProgress;
+export default HIndex;

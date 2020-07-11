@@ -6,6 +6,7 @@ import getData from './data';
 import PlaysForOwnedGames from './PlaysForOwnedGames';
 import GamesPlayProgress from './GamesPlayProgress';
 import GroupedPlayProgress from './GroupedPlayProgress';
+import HIndex from './HIndex';
 import { analytics } from '../../firebase';
 
 const useErrorState = () => {
@@ -42,7 +43,10 @@ const useStyles = makeStyles(theme => ({
     overflow: 'auto',
   },
   input: {
-    margin: theme.spacing(1, 0),
+    margin: theme.spacing(1, 0, 3),
+    [theme.breakpoints.down('sm')]: {
+      margin: theme.spacing(1, 0),
+    },
   },
   plays: {
     flex: 1,
@@ -105,6 +109,15 @@ const Bgg = () => {
             className={classes.owned}
           />
         </Route>
+        <Route path="/bgg-play-progress-grouped">
+          <GroupedPlayProgress
+            isFetching={isFetching}
+            errorState={errorState}
+            plays={plays}
+            username={username}
+            className={classes.plays}
+          />
+        </Route>
         <Route path="/bgg-play-progress-by-game">
           <GamesPlayProgress
             key={plays}
@@ -116,9 +129,8 @@ const Bgg = () => {
             className={classes.plays}
           />
         </Route>
-        <Route path="/bgg-play-progress-grouped">
-          <GroupedPlayProgress
-            key={plays}
+        <Route path="/bgg-h-index">
+          <HIndex
             isFetching={isFetching}
             errorState={errorState}
             plays={plays}

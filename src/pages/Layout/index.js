@@ -47,8 +47,9 @@ const Layout = () => {
             <Route
               path={[
                 '/bgg-owned-games',
-                '/bgg-play-progress-by-game',
                 '/bgg-play-progress-grouped',
+                '/bgg-play-progress-by-game',
+                '/bgg-h-index',
               ]}
             >
               <Bgg />
