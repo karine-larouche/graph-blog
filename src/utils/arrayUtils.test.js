@@ -13,12 +13,20 @@ describe('range(f, l)', () => {
 });
 
 describe('sort', () => {
-  test('can sort an array of numbers', () => {
+  test('can sort an array of numbers in ascending order', () => {
     expect(sort([3, 7, -8, 11, 4])).toEqual([-8, 3, 4, 7, 11]);
   });
 
-  test('can sort an array of strings', () => {
+  test('can sort an array of strings in ascending order', () => {
     expect(sort(['b', 'aa', 'c', 'a'])).toEqual(['a', 'aa', 'b', 'c']);
+  });
+
+  test('can sort an array of numbers in descending order', () => {
+    expect(sort([3, 7, -8, 11, 4], 'desc')).toEqual([11, 7, 4, 3, -8]);
+  });
+
+  test('can sort an array of strings in descending order', () => {
+    expect(sort(['b', 'aa', 'c', 'a'], 'desc')).toEqual(['c', 'b', 'aa', 'a']);
   });
 });
 
