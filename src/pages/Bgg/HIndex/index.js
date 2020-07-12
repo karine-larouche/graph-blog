@@ -2,11 +2,24 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
+import IconButton from '@material-ui/core/IconButton';
+import ZoomInIcon from '@material-ui/icons/Add';
+import ZoomOutIcon from '@material-ui/icons/Remove';
 import ParentSize from '../../../components/ParentSize';
 import BggInstructions from '../../../components/BggInstruction';
 import HighlightedGameInfo from '../../../components/HighlightedGameInfo';
 import formatData from './formatData';
 import Graph from './Graph';
+
+const useZoom = () => {
+  const [zoom, setZoom] = useState(0.375);
+  const zoomInDisabled = zoom > 0.6;
+
+  const zoomIn = () => setZoom((zoom * 4) / 3);
+  const zoomOut = () => setZoom((zoom * 3) / 4);
+
+  return [zoom, zoomInDisabled, zoomIn, zoomOut];
+};
 
 const useStyles = makeStyles(theme => ({
   hIndex: {
@@ -18,7 +31,7 @@ const useStyles = makeStyles(theme => ({
     overflow: 'auto',
   },
   highlightedGameInfo: {
-    height: 24,
+    height: 30,
     margin: theme.spacing(0, 0, 1, 0),
   },
 }));
@@ -26,6 +39,7 @@ const useStyles = makeStyles(theme => ({
 const HIndex = ({ isFetching, errorState, plays, username, className }) => {
   const classes = useStyles();
   const [highlightedGame, setHighlightedGame] = useState();
+  const [zoom, zoomInDisabled, zoomIn, zoomOut] = useZoom();
 
   if (isFetching)
     return <Typography>{`Fetching games for ${username}...`}</Typography>;
@@ -42,11 +56,25 @@ const HIndex = ({ isFetching, errorState, plays, username, className }) => {
   return (
     <div className={`${classes.hIndex} ${className}`}>
       <div className={classes.highlightedGameInfo}>
-        {highlightedGame && (
+        {highlightedGame ? (
           <HighlightedGameInfo
             name={highlightedGame && highlightedGame.name}
             numberOfPlays={highlightedGame && highlightedGame.numberOfPlays}
           />
+        ) : (
+          <div>
+            <IconButton
+              aria-label="zoom in"
+              onClick={zoomIn}
+              disabled={zoomInDisabled}
+              size="small"
+            >
+              <ZoomInIcon />
+            </IconButton>
+            <IconButton aria-label="zoom out" onClick={zoomOut} size="small">
+              <ZoomOutIcon />
+            </IconButton>
+          </div>
         )}
       </div>
       <div className={classes.graph}>
@@ -56,6 +84,7 @@ const HIndex = ({ isFetching, errorState, plays, username, className }) => {
               totalPlays={totalPlays}
               highlightedGame={highlightedGame}
               setHighlightedGame={setHighlightedGame}
+              zoom={zoom}
               width={width}
               height={height}
             />

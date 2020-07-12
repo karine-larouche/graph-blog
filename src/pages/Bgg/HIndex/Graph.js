@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/core/styles';
 import { grey } from '@material-ui/core/colors';
-import { Typography } from '@material-ui/core';
+import Typography from '@material-ui/core/Typography';
 import { range } from '../../../utils/arrayUtils';
 
 const calculateHIndex = totalPlays =>
@@ -28,7 +28,14 @@ const useStyles = makeStyles(theme => ({
     fill: 'transparent',
     stroke: grey[900],
     strokeLinejoin: 'round',
-    pointerEvents: 'none',
+  },
+  cropStart: {
+    stopColor: theme.palette.background.default,
+    stopOpacity: 0,
+  },
+  cropEnd: {
+    stopColor: theme.palette.background.default,
+    stopOpacity: 1,
   },
   legend: {
     position: 'absolute',
@@ -38,12 +45,16 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(1, 2, 0, 0),
     textAlign: 'end',
   },
+  noHover: {
+    pointerEvents: 'none',
+  },
 }));
 
 const HIndexGraph = ({
   totalPlays,
   highlightedGame,
   setHighlightedGame,
+  zoom,
   width,
   height,
 }) => {
@@ -51,12 +62,25 @@ const HIndexGraph = ({
 
   const hIndex = calculateHIndex(totalPlays);
 
-  const squareStrokeWidth = 0.1;
-  const viewBoxWidth = totalPlays.length + squareStrokeWidth;
-  const viewBoxHeight = totalPlays[0].numberOfPlays + squareStrokeWidth;
+  const limitingAxis = height < width ? 'y' : 'x';
 
-  const limitingAxis =
-    height / viewBoxHeight < width / viewBoxWidth ? 'y' : 'x';
+  const squareStrokeWidth = 0.1;
+  const maxSquaresForLimitingAxis = hIndex / zoom;
+
+  const maxHorizontalSquares =
+    limitingAxis === 'x'
+      ? maxSquaresForLimitingAxis
+      : (maxSquaresForLimitingAxis * width) / height;
+  const maxVerticalSquares =
+    limitingAxis === 'y'
+      ? maxSquaresForLimitingAxis
+      : (maxSquaresForLimitingAxis * height) / width;
+
+  const viewBoxWidth = maxHorizontalSquares + squareStrokeWidth;
+  const viewBoxHeight = maxVerticalSquares + squareStrokeWidth;
+
+  const isXAxisCropped = totalPlays.length > maxHorizontalSquares;
+  const isYAxisCropped = totalPlays[0].numberOfPlays > maxVerticalSquares;
 
   const isHighlighted = game =>
     Boolean(highlightedGame) && highlightedGame.name === game.name;
@@ -70,31 +94,63 @@ const HIndexGraph = ({
         height={limitingAxis === 'y' ? `${height}px` : undefined}
       >
         <g>
-          {totalPlays.flatMap((game, x) =>
-            range(1, game.numberOfPlays).map(y => (
-              <rect
-                // eslint-disable-next-line react/no-array-index-key
-                key={`${x}-${y}`}
-                x={x}
-                y={viewBoxHeight - y}
-                ry={squareStrokeWidth / 4}
-                width={1}
-                height={1}
-                strokeWidth={squareStrokeWidth}
-                className={`${classes.playSquare} ${
-                  isHighlighted(game) ? classes.playSquareHighlighted : ''
-                }`}
-                onMouseEnter={() => setHighlightedGame(game)}
-                onMouseLeave={() => setHighlightedGame(null)}
-              />
-            )),
+          {totalPlays.slice(0, maxHorizontalSquares).flatMap((game, x) =>
+            range(1, Math.min(game.numberOfPlays, maxVerticalSquares)).map(
+              y => (
+                <rect
+                  // eslint-disable-next-line react/no-array-index-key
+                  key={`${x}-${y}`}
+                  x={x}
+                  y={viewBoxHeight - y}
+                  ry={squareStrokeWidth / 4}
+                  width={1}
+                  height={1}
+                  strokeWidth={squareStrokeWidth}
+                  className={`${classes.playSquare} ${
+                    isHighlighted(game) ? classes.playSquareHighlighted : ''
+                  }`}
+                  onMouseEnter={() => setHighlightedGame(game)}
+                  onMouseLeave={() => setHighlightedGame(null)}
+                />
+              ),
+            ),
           )}
           <path
             d={`M 0 ${viewBoxHeight - hIndex} l ${hIndex} 0 l 0 ${hIndex}`}
             strokeWidth={squareStrokeWidth * 3}
-            className={classes.hIndexSquare}
+            className={`${classes.hIndexSquare} ${classes.noHover}`}
           />
         </g>
+        <defs>
+          <linearGradient id="gradX" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" className={classes.cropStart} />
+            <stop offset="90%" className={classes.cropEnd} />
+          </linearGradient>
+          <linearGradient id="gradY" x1="0%" y1="100%" x2="0%" y2="0%">
+            <stop offset="0%" className={classes.cropStart} />
+            <stop offset="90%" className={classes.cropEnd} />
+          </linearGradient>
+        </defs>
+        {isXAxisCropped && (
+          <rect
+            x={Math.floor(maxHorizontalSquares) - 2}
+            y={squareStrokeWidth}
+            width={2 + squareStrokeWidth}
+            height={viewBoxHeight}
+            fill="url(#gradX)"
+            className={classes.noHover}
+          />
+        )}
+        {isYAxisCropped && (
+          <rect
+            x={-squareStrokeWidth / 2}
+            y={maxVerticalSquares % 1}
+            width={viewBoxWidth}
+            height={2 + squareStrokeWidth}
+            fill="url(#gradY)"
+            className={classes.noHover}
+          />
+        )}
       </svg>
       <div className={classes.legend}>
         <Typography variant="h5">Current H‑Index</Typography>
@@ -116,6 +172,7 @@ HIndexGraph.propTypes = {
     numberOfPlays: PropTypes.number.isRequired,
   }),
   setHighlightedGame: PropTypes.func.isRequired,
+  zoom: PropTypes.number.isRequired,
   width: PropTypes.number.isRequired,
   height: PropTypes.number.isRequired,
 };

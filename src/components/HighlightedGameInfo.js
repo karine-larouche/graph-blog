@@ -7,9 +7,13 @@ const useStyles = makeStyles(theme => ({
   highlightedGameInfo: {
     display: 'flex',
     alignItems: 'center',
+    flexWrap: 'wrap',
+  },
+  name: {
+    marginRight: theme.spacing(2),
   },
   rating: {
-    marginLeft: theme.spacing(2),
+    marginRight: theme.spacing(2),
     minWidth: 30,
     padding: '0 4px',
     height: 30,
@@ -17,9 +21,6 @@ const useStyles = makeStyles(theme => ({
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 2,
-  },
-  totalPlays: {
-    marginLeft: theme.spacing(2),
   },
 }));
 
@@ -34,7 +35,7 @@ const HighlightedGameInfo = ({
 
   return (
     <div className={`${classes.highlightedGameInfo} ${className}`}>
-      <Typography>{name}</Typography>
+      <Typography className={classes.name}>{name}</Typography>
       {rating && (
         <div
           className={classes.rating}
@@ -45,9 +46,7 @@ const HighlightedGameInfo = ({
           <Typography variant="body2">{rating}</Typography>
         </div>
       )}
-      <Typography className={classes.totalPlays}>
-        Total plays: {numberOfPlays}
-      </Typography>
+      <Typography>Total plays: {numberOfPlays}</Typography>
     </div>
   );
 };
