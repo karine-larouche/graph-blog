@@ -1,5 +1,5 @@
 import { isValid } from 'date-fns';
-import { sort } from '../../../utils/arrayUtils';
+import { sortBy } from '../../../utils/arrayUtils';
 
 export default plays => {
   const totalPlaysPerGame = plays.reduceRight((totalPlays, play) => {
@@ -10,5 +10,12 @@ export default plays => {
     return totalPlays;
   }, {});
 
-  return sort(Object.values(totalPlaysPerGame), 'desc');
+  return sortBy(
+    Object.entries(totalPlaysPerGame).map(([name, numberOfPlays]) => ({
+      name,
+      numberOfPlays,
+    })),
+    'numberOfPlays',
+    'desc',
+  );
 };

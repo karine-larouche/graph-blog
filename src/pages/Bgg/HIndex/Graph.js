@@ -6,7 +6,9 @@ import { Typography } from '@material-ui/core';
 import { range } from '../../../utils/arrayUtils';
 
 const calculateHIndex = totalPlays =>
-  Math.max(...totalPlays.map((total, index) => Math.min(total, index + 1)));
+  Math.max(
+    ...totalPlays.map((game, index) => Math.min(game.numberOfPlays, index + 1)),
+  );
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -19,10 +21,14 @@ const useStyles = makeStyles(theme => ({
     fill: theme.palette.primary.main,
     stroke: grey[900],
   },
+  playSquareHighlighted: {
+    fill: theme.palette.primary.light,
+  },
   hIndexSquare: {
     fill: 'transparent',
     stroke: grey[900],
     strokeLinejoin: 'round',
+    pointerEvents: 'none',
   },
   legend: {
     position: 'absolute',
@@ -34,17 +40,26 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const HIndexGraph = ({ totalPlays, width, height }) => {
+const HIndexGraph = ({
+  totalPlays,
+  highlightedGame,
+  setHighlightedGame,
+  width,
+  height,
+}) => {
   const classes = useStyles();
 
   const hIndex = calculateHIndex(totalPlays);
 
   const squareStrokeWidth = 0.1;
   const viewBoxWidth = totalPlays.length + squareStrokeWidth;
-  const viewBoxHeight = totalPlays[0] + squareStrokeWidth;
+  const viewBoxHeight = totalPlays[0].numberOfPlays + squareStrokeWidth;
 
   const limitingAxis =
     height / viewBoxHeight < width / viewBoxWidth ? 'y' : 'x';
+
+  const isHighlighted = game =>
+    Boolean(highlightedGame) && highlightedGame.name === game.name;
 
   return (
     <div className={classes.container}>
@@ -55,8 +70,8 @@ const HIndexGraph = ({ totalPlays, width, height }) => {
         height={limitingAxis === 'y' ? `${height}px` : undefined}
       >
         <g>
-          {totalPlays.flatMap((total, x) =>
-            range(1, total).map(y => (
+          {totalPlays.flatMap((game, x) =>
+            range(1, game.numberOfPlays).map(y => (
               <rect
                 // eslint-disable-next-line react/no-array-index-key
                 key={`${x}-${y}`}
@@ -66,7 +81,11 @@ const HIndexGraph = ({ totalPlays, width, height }) => {
                 width={1}
                 height={1}
                 strokeWidth={squareStrokeWidth}
-                className={classes.playSquare}
+                className={`${classes.playSquare} ${
+                  isHighlighted(game) ? classes.playSquareHighlighted : ''
+                }`}
+                onMouseEnter={() => setHighlightedGame(game)}
+                onMouseLeave={() => setHighlightedGame(null)}
               />
             )),
           )}
@@ -86,11 +105,21 @@ const HIndexGraph = ({ totalPlays, width, height }) => {
 };
 
 HIndexGraph.propTypes = {
-  totalPlays: PropTypes.arrayOf(PropTypes.number).isRequired,
+  totalPlays: PropTypes.arrayOf(
+    PropTypes.shape({
+      name: PropTypes.string.isRequired,
+      numberOfPlays: PropTypes.number.isRequired,
+    }),
+  ).isRequired,
+  highlightedGame: PropTypes.shape({
+    name: PropTypes.string.isRequired,
+    numberOfPlays: PropTypes.number.isRequired,
+  }),
+  setHighlightedGame: PropTypes.func.isRequired,
   width: PropTypes.number.isRequired,
   height: PropTypes.number.isRequired,
 };
 
-HIndexGraph.defaultProps = {};
+HIndexGraph.defaultProps = { highlightedGame: null };
 
 export default HIndexGraph;

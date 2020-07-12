@@ -8,7 +8,7 @@ import { mix } from 'colour-utils';
 import { last } from '../../../utils/arrayUtils';
 import ParentSize from '../../../components/ParentSize';
 import BggInstructions from '../../../components/BggInstruction';
-import HighlightedGameInfo from './HighlightedGameInfo';
+import HighlightedGameInfo from '../../../components/HighlightedGameInfo';
 import Graph from './Graph';
 
 const ratingColors = {
@@ -79,7 +79,7 @@ const addRatings = (playsPerGame, ratings) => {
 const formatData = (plays, ratings) =>
   plays && ratings ? addRatings(groupByGame(plays), ratings) : null;
 
-const useStyles = makeStyles({
+const useStyles = makeStyles(theme => ({
   gamePlayProgress: {
     display: 'flex',
     flexDirection: 'column',
@@ -88,7 +88,11 @@ const useStyles = makeStyles({
     flex: 1,
     overflow: 'auto',
   },
-});
+  highlightedGameInfo: {
+    height: 40,
+    margin: theme.spacing(0, 0, 1, 1),
+  },
+}));
 
 const GamesPlayProgress = ({
   isFetching,
@@ -117,10 +121,21 @@ const GamesPlayProgress = ({
 
   return (
     <div className={`${classes.gamePlayProgress} ${className}`}>
-      <HighlightedGameInfo
-        highlightedGame={highlightedGame}
-        getRatingColor={getRatingColor}
-      />
+      {highlightedGame ? (
+        <HighlightedGameInfo
+          name={highlightedGame && highlightedGame.name}
+          rating={highlightedGame && highlightedGame.rating}
+          numberOfPlays={
+            highlightedGame && last(highlightedGame.totalPlays).total
+          }
+          getRatingColor={getRatingColor}
+          className={classes.highlightedGameInfo}
+        />
+      ) : (
+        <Typography className={classes.highlightedGameInfo}>
+          Hover over a line to see game info
+        </Typography>
+      )}
       <div className={classes.graph}>
         <ParentSize>
           {({ width, height }) => (

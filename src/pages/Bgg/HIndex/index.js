@@ -1,13 +1,14 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import ParentSize from '../../../components/ParentSize';
 import BggInstructions from '../../../components/BggInstruction';
+import HighlightedGameInfo from '../../../components/HighlightedGameInfo';
 import formatData from './formatData';
 import Graph from './Graph';
 
-const useStyles = makeStyles({
+const useStyles = makeStyles(theme => ({
   hIndex: {
     display: 'flex',
     flexDirection: 'column',
@@ -16,10 +17,15 @@ const useStyles = makeStyles({
     flex: 1,
     overflow: 'auto',
   },
-});
+  highlightedGameInfo: {
+    height: 24,
+    margin: theme.spacing(0, 0, 1, 0),
+  },
+}));
 
 const HIndex = ({ isFetching, errorState, plays, username, className }) => {
   const classes = useStyles();
+  const [highlightedGame, setHighlightedGame] = useState();
 
   if (isFetching)
     return <Typography>{`Fetching games for ${username}...`}</Typography>;
@@ -35,10 +41,24 @@ const HIndex = ({ isFetching, errorState, plays, username, className }) => {
 
   return (
     <div className={`${classes.hIndex} ${className}`}>
+      <div className={classes.highlightedGameInfo}>
+        {highlightedGame && (
+          <HighlightedGameInfo
+            name={highlightedGame && highlightedGame.name}
+            numberOfPlays={highlightedGame && highlightedGame.numberOfPlays}
+          />
+        )}
+      </div>
       <div className={classes.graph}>
         <ParentSize>
           {({ width, height }) => (
-            <Graph totalPlays={totalPlays} width={width} height={height} />
+            <Graph
+              totalPlays={totalPlays}
+              highlightedGame={highlightedGame}
+              setHighlightedGame={setHighlightedGame}
+              width={width}
+              height={height}
+            />
           )}
         </ParentSize>
       </div>
