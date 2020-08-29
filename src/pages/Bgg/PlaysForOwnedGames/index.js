@@ -4,6 +4,7 @@ import { red, orange, amber, lightGreen } from '@material-ui/core/colors';
 import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import BggInstructions from '../../../components/BggInstruction';
+import BggErrorState from '../../../components/BggErrorState';
 import Legend from '../../../components/Legend';
 import Pie from './Pie';
 import List from './List';
@@ -86,8 +87,7 @@ const PlaysForOwnedGames = ({
     return <Typography>{`Fetching games for ${username}...`}</Typography>;
   if (errorState.hasError && errorState.error === 'username')
     return <Typography>Invalid username</Typography>;
-  if (errorState.hasError)
-    return <Typography>An error occured, please try again</Typography>;
+  if (errorState.hasError) return <BggErrorState />;
   if (!games) return <BggInstructions />;
   if (games.length === 0)
     return (
