@@ -16,6 +16,11 @@ const useStyles = makeStyles(theme =>
     label: {
       backgroundColor: ({ selected }) => selected && selected.color,
       padding: '4px 20px',
+      display: 'flex',
+      alignItems: 'center',
+    },
+    total: {
+      marginLeft: 6,
     },
     listContainer: {
       flex: 1,
@@ -35,6 +40,7 @@ const useStyles = makeStyles(theme =>
 
 const List = ({ selected, className }) => {
   const classes = useStyles({ selected });
+  const total = selected && selected.games.length;
 
   return (
     <div className={`${className} ${classes.root}`}>
@@ -42,6 +48,9 @@ const List = ({ selected, className }) => {
         <>
           <div className={classes.label}>
             <Typography>{selected.label}</Typography>
+            <Typography variant="caption" className={classes.total}>
+              {`(${total} game${total > 1 ? 's' : ''})`}
+            </Typography>
           </div>
           <div className={classes.listContainer}>
             <ul className={classes.list}>
