@@ -52,9 +52,6 @@ const useStyles = makeStyles(theme => ({
     flex: 1,
     overflow: 'auto',
   },
-  owned: {
-    flex: 1,
-  },
 }));
 
 const Bgg = () => {
@@ -106,7 +103,6 @@ const Bgg = () => {
             errorState={errorState}
             games={ownedGames}
             username={username}
-            className={classes.owned}
           />
         </Route>
         <Route path="/bgg-play-progress-grouped">
