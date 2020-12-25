@@ -1,15 +1,18 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
 import ZoomInIcon from '@material-ui/icons/Add';
 import ZoomOutIcon from '@material-ui/icons/Remove';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import Switch from '@material-ui/core/Switch';
+import { useTogglableBooleanState } from '../../../utils/hookUtils';
 import ParentSize from '../../../components/ParentSize';
 import BggInstructions from '../../../components/BggInstruction';
 import BggErrorState from '../../../components/BggErrorState';
 import HighlightedGameInfo from '../../../components/HighlightedGameInfo';
-import formatData from './formatData';
+import { removeInvalidDates, formatTotalPlaysYear } from './formatData';
 import Graph from './Graph';
 
 const useZoom = () => {
@@ -31,6 +34,9 @@ const useStyles = makeStyles(theme => ({
     flex: 1,
     overflow: 'auto',
   },
+  yearToggle: {
+    marginLeft: 8,
+  },
   highlightedGameInfo: {
     height: 30,
     margin: theme.spacing(0, 0, 1, 0),
@@ -39,8 +45,18 @@ const useStyles = makeStyles(theme => ({
 
 const HIndex = ({ isFetching, errorState, plays, username, className }) => {
   const classes = useStyles();
-  const [highlightedGame, setHighlightedGame] = useState();
+
   const [zoom, zoomInDisabled, zoomIn, zoomOut] = useZoom();
+
+  const [isYearMode, toggleYearMode] = useTogglableBooleanState(false);
+  const [highlightedYear, setHighlightedYear] = useState(null);
+  const [highlightedGame, setHighlightedGame] = useState(null);
+
+  const totalPlaysYear = useMemo(() => {
+    if (!plays || !plays.length) return null;
+    const validPlays = removeInvalidDates(plays);
+    return formatTotalPlaysYear(validPlays);
+  }, [plays]);
 
   if (isFetching)
     return <Typography>{`Fetching games for ${username}...`}</Typography>;
@@ -50,8 +66,6 @@ const HIndex = ({ isFetching, errorState, plays, username, className }) => {
   if (!plays) return <BggInstructions />;
   if (plays.length === 0)
     return <Typography>Log your plays on bgg to see this chart.</Typography>;
-
-  const totalPlays = formatData(plays);
 
   return (
     <div className={`${classes.hIndex} ${className}`}>
@@ -74,6 +88,17 @@ const HIndex = ({ isFetching, errorState, plays, username, className }) => {
             <IconButton aria-label="zoom out" onClick={zoomOut} size="small">
               <ZoomOutIcon />
             </IconButton>
+            <FormControlLabel
+              control={
+                <Switch
+                  checked={isYearMode}
+                  onChange={toggleYearMode}
+                  color="primary"
+                />
+              }
+              label={`Year mode ${isYearMode ? 'on' : 'off'}`}
+              className={classes.yearToggle}
+            />
           </div>
         )}
       </div>
@@ -81,8 +106,11 @@ const HIndex = ({ isFetching, errorState, plays, username, className }) => {
         <ParentSize>
           {({ width, height }) => (
             <Graph
-              totalPlays={totalPlays}
+              totalPlaysYear={totalPlaysYear}
+              isYearMode={isYearMode}
+              highlightedYear={highlightedYear}
               highlightedGame={highlightedGame}
+              setHighlightedYear={setHighlightedYear}
               setHighlightedGame={setHighlightedGame}
               zoom={zoom}
               width={width}

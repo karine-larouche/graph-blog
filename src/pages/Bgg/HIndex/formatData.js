@@ -1,9 +1,11 @@
-import { isValid } from 'date-fns';
-import { sortBy } from '../../../utils/arrayUtils';
+import { isValid, getYear } from 'date-fns';
+import { last, range, sortBy } from '../../../utils/arrayUtils';
 
-export default plays => {
+const isNotAfterYear = (date, year) => getYear(new Date(date)) <= year;
+
+const getTotalPlaysUntilYear = (plays, year) => {
   const totalPlaysPerGame = plays.reduceRight((totalPlays, play) => {
-    if (isValid(new Date(play.date)) && play.quantity !== 0) {
+    if (isNotAfterYear(play.date, year) && play.quantity !== 0) {
       // eslint-disable-next-line no-param-reassign
       totalPlays[play.name] = (totalPlays[play.name] || 0) + play.quantity;
     }
@@ -18,4 +20,17 @@ export default plays => {
     'numberOfPlays',
     'desc',
   );
+};
+
+export const removeInvalidDates = plays =>
+  plays.filter(p => isValid(new Date(p.date)));
+
+export const formatTotalPlaysYear = plays => {
+  const yearOfFirstPlay = getYear(new Date(last(plays).date));
+  const currentYear = getYear(new Date());
+
+  return range(yearOfFirstPlay, currentYear).map(y => ({
+    year: y,
+    totalPlays: getTotalPlaysUntilYear(plays, y),
+  }));
 };

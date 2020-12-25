@@ -1,9 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles, useTheme } from '@material-ui/core/styles';
 import { grey } from '@material-ui/core/colors';
 import Typography from '@material-ui/core/Typography';
-import { range } from '../../../utils/arrayUtils';
+import { mix } from 'colour-utils';
+import { last, range } from '../../../utils/arrayUtils';
 
 const calculateHIndex = totalPlays =>
   Math.max(
@@ -18,11 +19,7 @@ const useStyles = makeStyles(theme => ({
     alignItems: 'flex-end',
   },
   playSquare: {
-    fill: theme.palette.primary.main,
     stroke: grey[900],
-  },
-  playSquareHighlighted: {
-    fill: theme.palette.primary.light,
   },
   hIndexSquare: {
     fill: 'transparent',
@@ -50,17 +47,79 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
+/* eslint-disable react/prop-types */
+const SingleSquare = React.memo(
+  ({
+    x,
+    y,
+    game,
+    year,
+    squareStrokeWidth,
+    fill,
+    className,
+    setHighlightedGame,
+    setHighlightedYear,
+  }) => {
+    return (
+      <rect
+        x={x}
+        y={y}
+        ry={squareStrokeWidth / 4}
+        width={1}
+        height={1}
+        strokeWidth={squareStrokeWidth}
+        className={className}
+        fill={fill}
+        onMouseEnter={() => {
+          setHighlightedGame(game);
+          setHighlightedYear(year);
+        }}
+        onMouseLeave={() => {
+          setHighlightedGame(null);
+          setHighlightedYear(null);
+        }}
+      />
+    );
+  },
+);
+/* eslint-enable react/prop-types */
+
 const HIndexGraph = ({
-  totalPlays,
+  totalPlaysYear,
+  isYearMode,
+  highlightedYear,
   highlightedGame,
+  setHighlightedYear,
   setHighlightedGame,
   zoom,
   width,
   height,
 }) => {
   const classes = useStyles();
+  const theme = useTheme();
 
-  const hIndex = calculateHIndex(totalPlays);
+  const yearColors = [
+    theme.palette.primary.main,
+    mix(theme.palette.primary.main, theme.palette.background.default, 0.25),
+    mix(theme.palette.primary.main, theme.palette.background.default, 0.5),
+    mix(theme.palette.primary.main, theme.palette.background.default, 0.75),
+  ];
+  const highlightedYearColors = [
+    mix(theme.palette.primary.main, theme.palette.background.default, 0.3),
+    mix(theme.palette.primary.main, theme.palette.background.default, 0.55),
+    mix(theme.palette.primary.main, theme.palette.background.default, 0.7),
+    mix(theme.palette.primary.main, theme.palette.background.default, 0.95),
+  ];
+
+  const totalPlaysLastYear = last(totalPlaysYear).totalPlays;
+  const totalPlaysSelectedYear =
+    highlightedYear &&
+    totalPlaysYear.find(({ year }) => year === highlightedYear).totalPlays;
+
+  const hIndex = calculateHIndex(totalPlaysLastYear);
+  const hIndexSelectedYear =
+    highlightedYear && calculateHIndex(totalPlaysSelectedYear);
+  const displayedHIndex = hIndexSelectedYear || hIndex;
 
   const limitingAxis = height < width ? 'y' : 'x';
 
@@ -79,11 +138,18 @@ const HIndexGraph = ({
   const viewBoxWidth = maxHorizontalSquares + squareStrokeWidth;
   const viewBoxHeight = maxVerticalSquares + squareStrokeWidth;
 
-  const isXAxisCropped = totalPlays.length > maxHorizontalSquares;
-  const isYAxisCropped = totalPlays[0].numberOfPlays > maxVerticalSquares;
+  const isXAxisCropped = totalPlaysLastYear.length > maxHorizontalSquares;
+  const isYAxisCropped =
+    totalPlaysLastYear[0].numberOfPlays > maxVerticalSquares;
 
-  const isHighlighted = game =>
-    Boolean(highlightedGame) && highlightedGame.name === game.name;
+  const isHighlighted = (game, year) =>
+    Boolean(highlightedGame) &&
+    highlightedGame.name === game.name &&
+    highlightedYear === year;
+
+  const displayedTotalPlaysYear = isYearMode
+    ? totalPlaysYear.filter(({ year }) => year >= highlightedYear).reverse()
+    : [last(totalPlaysYear)];
 
   return (
     <div className={classes.container}>
@@ -94,29 +160,40 @@ const HIndexGraph = ({
         height={limitingAxis === 'y' ? `${height}px` : undefined}
       >
         <g>
-          {totalPlays.slice(0, maxHorizontalSquares).flatMap((game, x) =>
-            range(1, Math.min(game.numberOfPlays, maxVerticalSquares)).map(
-              y => (
-                <rect
-                  // eslint-disable-next-line react/no-array-index-key
-                  key={`${x}-${y}`}
-                  x={x}
-                  y={viewBoxHeight - y}
-                  ry={squareStrokeWidth / 4}
-                  width={1}
-                  height={1}
-                  strokeWidth={squareStrokeWidth}
-                  className={`${classes.playSquare} ${
-                    isHighlighted(game) ? classes.playSquareHighlighted : ''
-                  }`}
-                  onMouseEnter={() => setHighlightedGame(game)}
-                  onMouseLeave={() => setHighlightedGame(null)}
-                />
+          {displayedTotalPlaysYear.map(({ year, totalPlays }, i) =>
+            totalPlays
+              .slice(0, maxHorizontalSquares)
+              .flatMap((game, x) =>
+                range(
+                  1,
+                  Math.min(game.numberOfPlays, maxVerticalSquares),
+                ).map(y => (
+                  <SingleSquare
+                    key={`${year}-${x}-${y}`}
+                    x={x}
+                    y={viewBoxHeight - y}
+                    squareStrokeWidth={squareStrokeWidth}
+                    game={game}
+                    year={year}
+                    fill={
+                      isHighlighted(game, year)
+                        ? highlightedYearColors[i % yearColors.length]
+                        : yearColors[i % yearColors.length]
+                    }
+                    className={`${classes.playSquare} ${
+                      isHighlighted(game, year)
+                        ? classes.playSquareHighlighted
+                        : ''
+                    }`}
+                    setHighlightedGame={setHighlightedGame}
+                    setHighlightedYear={setHighlightedYear}
+                  />
+                )),
               ),
-            ),
           )}
           <path
-            d={`M 0 ${viewBoxHeight - hIndex} l ${hIndex} 0 l 0 ${hIndex}`}
+            d={`M 0 ${viewBoxHeight -
+              displayedHIndex} l ${displayedHIndex} 0 l 0 ${displayedHIndex}`}
             strokeWidth={squareStrokeWidth * 3}
             className={`${classes.hIndexSquare} ${classes.noHover}`}
           />
@@ -153,30 +230,47 @@ const HIndexGraph = ({
         )}
       </svg>
       <div className={classes.legend}>
-        <Typography variant="h5">Current H‑Index</Typography>
-        <Typography variant="h2">{hIndex}</Typography>
+        <Typography variant="h5">
+          {isYearMode && highlightedYear
+            ? `H-Index for ${highlightedYear}`
+            : 'Current H‑Index'}
+        </Typography>
+        <Typography variant="h2">{displayedHIndex}</Typography>
       </div>
     </div>
   );
 };
 
+const totalPlaysShape = PropTypes.arrayOf(
+  PropTypes.shape({
+    name: PropTypes.string.isRequired,
+    numberOfPlays: PropTypes.number.isRequired,
+  }),
+);
+
 HIndexGraph.propTypes = {
-  totalPlays: PropTypes.arrayOf(
+  totalPlaysYear: PropTypes.arrayOf(
     PropTypes.shape({
-      name: PropTypes.string.isRequired,
-      numberOfPlays: PropTypes.number.isRequired,
+      year: PropTypes.number.isRequired,
+      totalPlays: totalPlaysShape.isRequired,
     }),
   ).isRequired,
+  isYearMode: PropTypes.bool.isRequired,
+  highlightedYear: PropTypes.number,
   highlightedGame: PropTypes.shape({
     name: PropTypes.string.isRequired,
     numberOfPlays: PropTypes.number.isRequired,
   }),
+  setHighlightedYear: PropTypes.func.isRequired,
   setHighlightedGame: PropTypes.func.isRequired,
   zoom: PropTypes.number.isRequired,
   width: PropTypes.number.isRequired,
   height: PropTypes.number.isRequired,
 };
 
-HIndexGraph.defaultProps = { highlightedGame: null };
+HIndexGraph.defaultProps = {
+  highlightedGame: null,
+  highlightedYear: null,
+};
 
 export default HIndexGraph;
