@@ -49,7 +49,12 @@ Pie.propTypes = {
     PropTypes.shape({
       label: PropTypes.string.isRequired,
       color: PropTypes.string.isRequired,
-      games: PropTypes.array,
+      games: PropTypes.arrayOf(
+        PropTypes.shape({
+          name: PropTypes.string.isRequired,
+          numPlays: PropTypes.number.isRequired,
+        }),
+      ),
     }),
   ).isRequired,
   selectedIndex: PropTypes.number,
