@@ -1,5 +1,5 @@
-import firebase from 'firebase/app';
-import 'firebase/analytics';
+import { initializeApp } from 'firebase/app';
+import { getAnalytics, logEvent } from 'firebase/analytics';
 
 const firebaseConfig = {
   apiKey: 'AIzaSyCBW7WI-4E5YbYZOpCy_OyhLa4psMERbnc',
@@ -12,7 +12,9 @@ const firebaseConfig = {
   measurementId: 'G-3LM69ZCFQG',
 };
 
-firebase.initializeApp(firebaseConfig);
+const firebaseApp = initializeApp(firebaseConfig);
+
+const analytics = getAnalytics(firebaseApp);
 
 // eslint-disable-next-line import/prefer-default-export
-export const analytics = firebase.analytics();
+export const track = (event, value) => logEvent(analytics, event, { value });

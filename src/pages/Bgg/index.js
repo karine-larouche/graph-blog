@@ -2,12 +2,12 @@ import React, { useState } from 'react';
 import { Switch, Route } from 'react-router-dom';
 import TextField from '@material-ui/core/TextField';
 import { makeStyles } from '@material-ui/core/styles';
+import { track } from '../../firebase';
 import getData from './data';
 import PlaysForOwnedGames from './PlaysForOwnedGames';
 import GamesPlayProgress from './GamesPlayProgress';
 import GroupedPlayProgress from './GroupedPlayProgress';
 import HIndex from './HIndex';
-import { analytics } from '../../firebase';
 
 const useErrorState = () => {
   const [errorState, setErrorState] = useState({
@@ -65,7 +65,7 @@ const Bgg = () => {
 
   const fetchData = async event => {
     event.preventDefault();
-    analytics.logEvent('bgg_username_submit', { value: username });
+    track('bgg_username_submit', username);
 
     if (!username) return;
 
