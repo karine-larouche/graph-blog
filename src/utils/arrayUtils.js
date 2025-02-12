@@ -19,6 +19,10 @@ export const sort = (array, direction = 'asc') => {
 };
 
 export const sortBy = (array, key, direction = 'asc') => {
+  if (array.length < 2) {
+    return array;
+  }
+
   if (typeof array[0][key] === 'number') {
     return direction === 'asc'
       ? array.sort((a, b) => a[key] - b[key])
