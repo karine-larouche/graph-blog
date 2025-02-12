@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import { red, orange, amber, lightGreen } from '@material-ui/core/colors';
+import { red, orange, amber, lightGreen, grey } from '@material-ui/core/colors';
 import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import BggInstructions from '../../../components/BggInstruction';
 import BggErrorState from '../../../components/BggErrorState';
+import BggSkeletonOverlay from '../../../components/BggSkeletonOverlay';
 import Legend from '../../../components/Legend';
 import Pie from './Pie';
 import List from './List';
@@ -17,6 +18,16 @@ const emptyPlayGroups = () => [
   { label: '5-9 plays', color: lightGreen[700], showAmount: true, games: [] },
   { label: '10-25 plays', color: lightGreen[800], showAmount: true, games: [] },
   { label: '25+ plays', color: lightGreen[900], showAmount: true, games: [] },
+];
+
+const playAmountSkeleton = [
+  { label: 'Never played', color: grey[500], numGames: 1 },
+  { label: '1 play', color: grey[400], numGames: 2 },
+  { label: '2 plays', color: grey[200], numGames: 3 },
+  { label: '3-4 plays', color: grey[300], numGames: 3 },
+  { label: '5-9 plays', color: grey[400], numGames: 4 },
+  { label: '10-25 plays', color: grey[500], numGames: 5 },
+  { label: '25+ plays', color: grey[600], numGames: 4 },
 ];
 
 const playGroupIndex = numPlays => {
@@ -37,6 +48,7 @@ const groupByPlays = games => {
 
 const useStyles = makeStyles(theme => ({
   root: {
+    position: 'relative',
     paddingTop: 10,
     display: 'flex',
     flexDirection: 'column',
@@ -83,22 +95,24 @@ const PlaysForOwnedGames = ({
   const classes = useStyles();
   const [selectedIndex, setSelectedIndex] = useState();
 
-  if (isFetching)
-    return <Typography>{`Fetching games for ${username}...`}</Typography>;
-  if (errorState.hasError && errorState.error === 'username')
-    return <Typography>Invalid username</Typography>;
-  if (errorState.hasError) return <BggErrorState />;
-  if (!games) return <BggInstructions />;
-  if (games.length === 0)
-    return (
-      <Typography>
-        Mark some games as owned on bgg to see this chart.
-      </Typography>
-    );
+  if (!isFetching) {
+    if (errorState.hasError && errorState.error === 'username')
+      return <Typography>Invalid username</Typography>;
+    if (errorState.hasError) return <BggErrorState />;
+    if (!games) return <BggInstructions />;
+    if (games.length === 0)
+      return (
+        <Typography>
+          Mark some games as owned on bgg to see this chart.
+        </Typography>
+      );
+  }
 
-  const playAmounts = groupByPlays(games);
-  const noRecordedPlays = !playAmounts.slice(1).find(a => a.games.length);
-  if (noRecordedPlays) return 'Log your plays on bgg to see this chart.';
+  const playAmounts = isFetching ? playAmountSkeleton : groupByPlays(games);
+  const noRecordedPlays =
+    !isFetching && !playAmounts.slice(1).find(a => a.games.length);
+  if (noRecordedPlays)
+    return <Typography>Log your plays on bgg to see this chart.</Typography>;
 
   const selected = playAmounts[selectedIndex];
 
@@ -106,6 +120,7 @@ const PlaysForOwnedGames = ({
     <div className={`${className} ${classes.root}`}>
       <div className={classes.pieAndLegend}>
         <Pie
+          isSkeleton={isFetching}
           playAmounts={playAmounts}
           selectedIndex={selectedIndex}
           onSectionSelection={setSelectedIndex}
@@ -113,12 +128,20 @@ const PlaysForOwnedGames = ({
         />
         <Legend
           data={playAmounts}
+          isSkeleton={isFetching}
           selectedIndex={selectedIndex}
           onSectionSelection={setSelectedIndex}
           className={classes.legend}
         />
       </div>
-      <List selected={selected} className={classes.list} />
+      <List
+        isSkeleton={isFetching}
+        selected={selected}
+        className={classes.list}
+      />
+      {isFetching && (
+        <BggSkeletonOverlay text={`Fetching games for ${username}...`} />
+      )}
     </div>
   );
 };

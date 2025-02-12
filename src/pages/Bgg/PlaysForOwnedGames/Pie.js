@@ -5,12 +5,18 @@ import { Pie as PieChart } from '@vx/shape';
 import { Group } from '@vx/group';
 
 const useStyles = makeStyles({
-  unselectedSection: {
+  selectableSection: {
     cursor: 'pointer',
   },
 });
 
-const Pie = ({ playAmounts, selectedIndex, onSectionSelection, className }) => {
+const Pie = ({
+  playAmounts,
+  isSkeleton,
+  selectedIndex,
+  onSectionSelection,
+  className,
+}) => {
   const classes = useStyles();
   const [width, height] = [220, 220];
   const radius = Math.min(width, height) / 2;
@@ -21,7 +27,7 @@ const Pie = ({ playAmounts, selectedIndex, onSectionSelection, className }) => {
       <Group top={centerY} left={centerX}>
         <PieChart
           data={playAmounts}
-          pieValue={d => d.games.length}
+          pieValue={d => d.numGames || d.games.length}
           pieSortValues={() => -1}
           outerRadius={radius}
         >
@@ -29,9 +35,11 @@ const Pie = ({ playAmounts, selectedIndex, onSectionSelection, className }) => {
             pie.arcs.map((arc, i) => (
               <g
                 key={arc.data.label}
-                onClick={() => onSectionSelection(i)}
+                onClick={isSkeleton ? undefined : () => onSectionSelection(i)}
                 className={
-                  selectedIndex === i ? undefined : classes.unselectedSection
+                  isSkeleton || selectedIndex === i
+                    ? undefined
+                    : classes.selectableSection
                 }
               >
                 <path d={pie.path(arc)} fill={playAmounts[i].color} />
@@ -55,8 +63,10 @@ Pie.propTypes = {
           numPlays: PropTypes.number.isRequired,
         }),
       ),
+      numGames: PropTypes.number,
     }),
   ).isRequired,
+  isSkeleton: PropTypes.bool.isRequired,
   selectedIndex: PropTypes.number,
   onSectionSelection: PropTypes.func.isRequired,
 };

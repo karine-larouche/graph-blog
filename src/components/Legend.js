@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
+import Skeletonnable from './Skeletonnable';
 
 const useStyles = makeStyles({
   legendItem: {
@@ -22,7 +23,13 @@ const useStyles = makeStyles({
   },
 });
 
-const Legend = ({ data, selectedIndex, onSectionSelection, className }) => {
+const Legend = ({
+  data,
+  isSkeleton,
+  selectedIndex,
+  onSectionSelection,
+  className,
+}) => {
   const classes = useStyles();
 
   return (
@@ -30,7 +37,7 @@ const Legend = ({ data, selectedIndex, onSectionSelection, className }) => {
       {data.map((d, i) => (
         <button
           key={d.label}
-          onClick={() => onSectionSelection(i)}
+          onClick={isSkeleton ? undefined : () => onSectionSelection(i)}
           type="button"
           className={`${classes.legendItem} ${
             selectedIndex === i ? '' : classes.unselectedSection
@@ -40,7 +47,9 @@ const Legend = ({ data, selectedIndex, onSectionSelection, className }) => {
             className={classes.legendColor}
             style={{ backgroundColor: d.color }}
           />
-          <Typography>{d.label}</Typography>
+          <Skeletonnable isSkeleton={isSkeleton} animation={false}>
+            <Typography>{d.label}</Typography>
+          </Skeletonnable>
         </button>
       ))}
     </div>
@@ -54,6 +63,7 @@ Legend.propTypes = {
       color: PropTypes.string.isRequired,
     }),
   ).isRequired,
+  isSkeleton: PropTypes.bool.isRequired,
   selectedIndex: PropTypes.number,
   onSectionSelection: PropTypes.func.isRequired,
 };

@@ -2,7 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Typography } from '@material-ui/core';
 import { makeStyles, createStyles } from '@material-ui/core/styles';
-import { blueGrey } from '@material-ui/core/colors';
+import { blueGrey, grey } from '@material-ui/core/colors';
+import Skeletonnable from '../../../components/Skeletonnable';
 
 const useStyles = makeStyles(theme =>
   createStyles({
@@ -35,10 +36,13 @@ const useStyles = makeStyles(theme =>
     instructions: {
       color: blueGrey[600],
     },
+    instructionSkeleton: {
+      color: grey[400],
+    },
   }),
 );
 
-const List = ({ selected, className }) => {
+const List = ({ selected, isSkeleton, className }) => {
   const classes = useStyles({ selected });
   const total = selected && selected.games.length;
 
@@ -70,9 +74,11 @@ const List = ({ selected, className }) => {
           </div>
         </>
       ) : (
-        <Typography className={classes.instructions}>
-          Click on a section of the chart to see the corresponding games.
-        </Typography>
+        <Skeletonnable isSkeleton={isSkeleton} animation={false}>
+          <Typography className={classes.instructions}>
+            Click on a section of the chart to see the corresponding games.
+          </Typography>
+        </Skeletonnable>
       )}
     </div>
   );
@@ -90,6 +96,7 @@ List.propTypes = {
       }),
     ).isRequired,
   }),
+  isSkeleton: PropTypes.bool.isRequired,
 };
 
 List.defaultProps = {
