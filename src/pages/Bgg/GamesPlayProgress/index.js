@@ -87,7 +87,7 @@ const useStyles = makeStyles(theme => ({
   },
   graph: {
     flex: 1,
-    overflow: 'auto',
+    overflow: 'hidden',
   },
   highlightedGameInfo: {
     height: 40,

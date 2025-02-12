@@ -15,7 +15,7 @@ const useStyles = makeStyles({
   },
   graph: {
     flex: 1,
-    overflow: 'auto',
+    overflow: 'hidden',
   },
 });
 
