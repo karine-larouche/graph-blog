@@ -8,6 +8,11 @@ const useStyles = makeStyles({
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
+    backgroundColor: 'transparent',
+    border: 'none',
+  },
+  unselectedSection: {
+    cursor: 'pointer',
   },
   legendColor: {
     height: 20,
@@ -17,19 +22,26 @@ const useStyles = makeStyles({
   },
 });
 
-const Legend = ({ data, className }) => {
+const Legend = ({ data, selectedIndex, onSectionSelection, className }) => {
   const classes = useStyles();
 
   return (
     <div className={className}>
-      {data.map(d => (
-        <div key={d.label} className={classes.legendItem}>
+      {data.map((d, i) => (
+        <button
+          key={d.label}
+          onClick={() => onSectionSelection(i)}
+          type="button"
+          className={`${classes.legendItem} ${
+            selectedIndex === i ? '' : classes.unselectedSection
+          }`}
+        >
           <div
             className={classes.legendColor}
             style={{ backgroundColor: d.color }}
           />
           <Typography>{d.label}</Typography>
-        </div>
+        </button>
       ))}
     </div>
   );
@@ -42,6 +54,12 @@ Legend.propTypes = {
       color: PropTypes.string.isRequired,
     }),
   ).isRequired,
+  selectedIndex: PropTypes.number,
+  onSectionSelection: PropTypes.func.isRequired,
+};
+
+Legend.defaultProps = {
+  selectedIndex: undefined,
 };
 
 export default Legend;

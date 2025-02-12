@@ -111,7 +111,12 @@ const PlaysForOwnedGames = ({
           onSectionSelection={setSelectedIndex}
           className={classes.pie}
         />
-        <Legend data={playAmounts} className={classes.legend} />
+        <Legend
+          data={playAmounts}
+          selectedIndex={selectedIndex}
+          onSectionSelection={setSelectedIndex}
+          className={classes.legend}
+        />
       </div>
       <List selected={selected} className={classes.list} />
     </div>
