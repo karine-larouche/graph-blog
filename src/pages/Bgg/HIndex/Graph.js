@@ -169,7 +169,9 @@ const HIndexGraph = ({
                   Math.min(game.numberOfPlays, maxVerticalSquares),
                 ).map(y => (
                   <SingleSquare
-                    key={`${year}-${x}-${y}`}
+                    key={
+                      `${year}-${x}-${y}` /* eslint-disable-line react/no-array-index-key */
+                    }
                     x={x}
                     y={viewBoxHeight - y}
                     squareStrokeWidth={squareStrokeWidth}
