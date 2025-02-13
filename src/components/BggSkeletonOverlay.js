@@ -9,7 +9,7 @@ const useStyles = makeStyles({
     position: 'absolute',
     width: '100%',
     height: '100%',
-    backgroundColor: 'rgba(255, 255, 255, 0.5)',
+    backgroundColor: 'rgba(250, 250, 250, 0.5)',
   },
   skeletonText: {
     marginTop: 80,
