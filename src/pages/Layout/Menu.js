@@ -96,13 +96,6 @@ const Menu = ({ isOpen, close }) => {
               </Link>
             </ListItemText>
           </ListItem>
-          <ListItem>
-            <ListItemText>
-              <Link to="/bgg-play-progress-by-game" onClick={onLinkClick}>
-                BGG - Play Progress by Game
-              </Link>
-            </ListItemText>
-          </ListItem>
         </List>
       </nav>
     </Drawer>
