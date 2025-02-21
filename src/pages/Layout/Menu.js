@@ -1,7 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
-import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles, useTheme } from '@material-ui/core/styles';
+import useMediaQuery from '@material-ui/core/useMediaQuery';
 import Divider from '@material-ui/core/Divider';
 import Drawer from '@material-ui/core/Drawer';
 import IconButton from '@material-ui/core/IconButton';
@@ -42,6 +43,14 @@ const useStyles = makeStyles(theme => ({
 
 const Menu = ({ isOpen, close }) => {
   const classes = useStyles();
+  const theme = useTheme();
+  const closeOnLinkClick = useMediaQuery(theme.breakpoints.down('xs'));
+
+  const onLinkClick = () => {
+    if (closeOnLinkClick) {
+      close();
+    }
+  };
 
   return (
     <Drawer
@@ -68,22 +77,28 @@ const Menu = ({ isOpen, close }) => {
           </ListItem>
           <ListItem>
             <ListItemText>
-              <Link to="/bgg-owned-games">BGG - Owned Games</Link>
+              <Link to="/bgg-owned-games" onClick={onLinkClick}>
+                BGG - Owned Games
+              </Link>
             </ListItemText>
           </ListItem>
           <ListItem>
             <ListItemText>
-              <Link to="/bgg-h-index">BGG - H-index</Link>
+              <Link to="/bgg-h-index" onClick={onLinkClick}>
+                BGG - H-index
+              </Link>
             </ListItemText>
           </ListItem>
           <ListItem>
             <ListItemText>
-              <Link to="/bgg-play-progress-grouped">BGG - Play Progress</Link>
+              <Link to="/bgg-play-progress-grouped" onClick={onLinkClick}>
+                BGG - Play Progress
+              </Link>
             </ListItemText>
           </ListItem>
           <ListItem>
             <ListItemText>
-              <Link to="/bgg-play-progress-by-game">
+              <Link to="/bgg-play-progress-by-game" onClick={onLinkClick}>
                 BGG - Play Progress by Game
               </Link>
             </ListItemText>

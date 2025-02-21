@@ -35,13 +35,16 @@ const useStyles = makeStyles(theme => ({
 const Layout = () => {
   const classes = useStyles();
   const location = useLocation();
-  const [open, setOpen] = React.useState(location.pathname === '/');
+  const [isMenuOpen, setMenuOpen] = React.useState(location.pathname === '/');
 
   return (
     <div className={classes.layout}>
-      <Menu isOpen={open} close={() => setOpen(false)} />
+      <Menu isOpen={isMenuOpen} close={() => setMenuOpen(false)} />
       <div className={classes.shift}>
-        <AppBar showMenuButton={!open} openMenu={() => setOpen(true)} />
+        <AppBar
+          showMenuButton={!isMenuOpen}
+          openMenu={() => setMenuOpen(true)}
+        />
         <main className={classes.main}>
           <Switch>
             <Route
