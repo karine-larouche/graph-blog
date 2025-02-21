@@ -61,7 +61,7 @@ const HIndex = ({ isFetching, errorState, plays, username, className }) => {
   if (isFetching)
     return <Typography>{`Fetching games for ${username}...`}</Typography>;
   if (errorState.hasError && errorState.error === 'username')
-    return <Typography>Invalid username</Typography>;
+    return <Typography>Invalid username: {username}</Typography>;
   if (errorState.hasError) return <BggErrorState />;
   if (!plays) return <BggInstructions />;
   if (plays.length === 0)

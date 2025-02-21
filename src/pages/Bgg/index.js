@@ -56,7 +56,8 @@ const useStyles = makeStyles(theme => ({
 
 const Bgg = () => {
   const classes = useStyles();
-  const [username, setUsername] = useState('');
+  const [typedUsername, setTypedUsername] = useState('');
+  const [submittedUsername, setSubmittedUsername] = useState('');
   const [isFetching, setIsFetching] = useState(false);
   const [errorState, setError, resetErrorState] = useErrorState();
   const [ownedGames, setOwnedGames] = useState();
@@ -65,14 +66,15 @@ const Bgg = () => {
 
   const fetchData = async event => {
     event.preventDefault();
-    track('bgg_username_submit', username);
+    track('bgg_username_submit', typedUsername);
 
-    if (!username) return;
+    if (!typedUsername) return;
 
     setIsFetching(true);
+    setSubmittedUsername(typedUsername);
     resetErrorState();
 
-    const data = await getData(username);
+    const data = await getData(typedUsername);
 
     if (data.hasError) {
       setError(data.error);
@@ -91,8 +93,8 @@ const Bgg = () => {
         <TextField
           label="bgg username"
           variant="outlined"
-          value={username}
-          onChange={event => setUsername(event.target.value)}
+          value={typedUsername}
+          onChange={event => setTypedUsername(event.target.value)}
           className={classes.input}
         />
       </form>
@@ -102,7 +104,7 @@ const Bgg = () => {
             isFetching={isFetching}
             errorState={errorState}
             games={ownedGames}
-            username={username}
+            username={submittedUsername}
           />
         </Route>
         <Route path="/bgg-play-progress-grouped">
@@ -110,7 +112,7 @@ const Bgg = () => {
             isFetching={isFetching}
             errorState={errorState}
             plays={plays}
-            username={username}
+            username={submittedUsername}
             className={classes.plays}
           />
         </Route>
@@ -121,7 +123,7 @@ const Bgg = () => {
             errorState={errorState}
             plays={plays}
             ratings={ratings}
-            username={username}
+            username={submittedUsername}
             className={classes.plays}
           />
         </Route>
@@ -130,7 +132,7 @@ const Bgg = () => {
             isFetching={isFetching}
             errorState={errorState}
             plays={plays}
-            username={username}
+            username={submittedUsername}
             className={classes.plays}
           />
         </Route>

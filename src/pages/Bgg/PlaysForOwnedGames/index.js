@@ -97,7 +97,7 @@ const PlaysForOwnedGames = ({
 
   if (!isFetching) {
     if (errorState.hasError && errorState.error === 'username')
-      return <Typography>Invalid username</Typography>;
+      return <Typography>Invalid username: {username}</Typography>;
     if (errorState.hasError) return <BggErrorState />;
     if (!games) return <BggInstructions />;
     if (games.length === 0)
