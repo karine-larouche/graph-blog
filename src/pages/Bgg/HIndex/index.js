@@ -19,10 +19,17 @@ const useZoom = () => {
   const [zoom, setZoom] = useState(0.375);
   const zoomInDisabled = zoom > 0.6;
 
-  const zoomIn = () => setZoom((zoom * 4) / 3);
+  const zoomIn = () => {
+    if (!zoomInDisabled) setZoom((zoom * 4) / 3);
+  };
   const zoomOut = () => setZoom((zoom * 3) / 4);
 
-  return [zoom, zoomInDisabled, zoomIn, zoomOut];
+  const zoomScroll = e => {
+    if (e.deltaY > 0) zoomOut();
+    if (e.deltaY < 0) zoomIn();
+  };
+
+  return [zoom, zoomInDisabled, zoomIn, zoomOut, zoomScroll];
 };
 
 const useStyles = makeStyles(theme => ({
@@ -46,7 +53,7 @@ const useStyles = makeStyles(theme => ({
 const HIndex = ({ isFetching, errorState, plays, username, className }) => {
   const classes = useStyles();
 
-  const [zoom, zoomInDisabled, zoomIn, zoomOut] = useZoom();
+  const [zoom, zoomInDisabled, zoomIn, zoomOut, zoomScroll] = useZoom();
 
   const [isYearMode, toggleYearMode] = useTogglableBooleanState(false);
   const [highlightedYear, setHighlightedYear] = useState(null);
@@ -68,7 +75,7 @@ const HIndex = ({ isFetching, errorState, plays, username, className }) => {
     return <Typography>Log your plays on bgg to see this chart.</Typography>;
 
   return (
-    <div className={`${classes.hIndex} ${className}`}>
+    <div className={`${classes.hIndex} ${className}`} onWheel={zoomScroll}>
       <div className={classes.highlightedGameInfo}>
         {highlightedGame ? (
           <HighlightedGameInfo
