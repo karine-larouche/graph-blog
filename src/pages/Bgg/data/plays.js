@@ -2,7 +2,7 @@ import { range } from '../../../utils/arrayUtils';
 import fetchWithRetry from '../../../utils/fetchWithRetry';
 
 const playsUrl = (username, page = 1) =>
-  `https://www.boardgamegeek.com/xmlapi2/plays?username=${username}&page=${page}`;
+  `https://boardgamegeek.com/xmlapi2/plays?username=${username}&page=${page}`;
 
 const isNotExpansion = play =>
   ![...play.getElementsByTagName('subtype')].find(

@@ -13,7 +13,7 @@ const excludedObjectIds = [
 ];
 
 const ownedGamesUrl = username =>
-  `https://www.boardgamegeek.com/xmlapi2/collection?username=${username}&own=1&excludesubtype=boardgameexpansion`;
+  `https://boardgamegeek.com/xmlapi2/collection?username=${username}&own=1&excludesubtype=boardgameexpansion`;
 
 const sortAndRemoveDuplicates = games =>
   sortBy(sortBy(games, 'name'), 'numPlays', 'desc').filter(
