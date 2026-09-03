@@ -33,8 +33,8 @@ const AppBar = ({ showMenuButton, openMenu }) => {
         >
           <MenuIcon />
         </IconButton>
-        <Typography variant="h6" noWrap>
-          Graph Collection
+        <Typography variant="h6" noWrap className={classes.title}>
+          Board Game Graph
         </Typography>
       </Toolbar>
     </MuiAppBar>

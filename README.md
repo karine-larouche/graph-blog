@@ -1,1 +1,1 @@
-graphcollection.com
+boardgamegraph.com
