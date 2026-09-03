@@ -14,6 +14,9 @@ const useStyles = makeStyles(theme => ({
   hide: {
     display: 'none',
   },
+  title: {
+    marginRight: theme.spacing(3),
+  },
 }));
 
 const AppBar = ({ showMenuButton, openMenu }) => {
@@ -36,6 +39,7 @@ const AppBar = ({ showMenuButton, openMenu }) => {
         <Typography variant="h6" noWrap className={classes.title}>
           Board Game Graph
         </Typography>
+        <img src="powered_by_K_02_MED.png" alt="Powered by BGG" height="48px" />
       </Toolbar>
     </MuiAppBar>
   );
